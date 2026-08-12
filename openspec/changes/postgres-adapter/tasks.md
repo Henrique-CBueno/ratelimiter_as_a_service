@@ -58,13 +58,18 @@
 
 ## 6. Tenant repository adapter
 
-- [ ] 6.1 Implement row mapping between the `tenants`/`api_tokens` tables and `Tenant`/`ApiToken`
-      (via `Tenant.reconstitute(...)`)
-- [ ] 6.2 Implement `save()` (upsert the tenant row; insert any new token rows, update revocation
-      status on existing ones)
-- [ ] 6.3 Implement `findById`, `findByEmail`, `findByActiveTokenHash`
-- [ ] 6.4 Catch the unique-email constraint violation on save and translate it into
-      `DuplicateEmailException`
+- [x] 6.1 Implement row mapping between the `tenants`/`api_tokens` tables and `Tenant`/`ApiToken`
+      (via `Tenant.reconstitute(...)`) — used `DatabaseClient` directly (not
+      `ReactiveCrudRepository`/`R2dbcEntityTemplate`), per design decision 2, since `Tenant` spans
+      two tables
+- [x] 6.2 Implement `save()` (upsert the tenant row; insert any new token rows, update revocation
+      status on existing ones) — both upserts use `INSERT ... ON CONFLICT (id) DO UPDATE`
+- [x] 6.3 Implement `findById`, `findByEmail`, `findByActiveTokenHash`
+- [x] 6.4 Catch the unique-email constraint violation on save and translate it into
+      `DuplicateEmailException` — detected by walking the exception cause chain for an
+      `R2dbcException` with SQL state `23505` (Postgres unique_violation), rather than relying on
+      Spring's automatic R2DBC exception translation being active in this raw `DatabaseClient`
+      setup (untested assumption, so avoided)
 
 ## 7. Resource repository adapter
 
