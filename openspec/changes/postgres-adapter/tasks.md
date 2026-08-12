@@ -82,12 +82,12 @@
 
 ## 8. Tenant persistence integration tests (Testcontainers PostgreSQL)
 
-- [ ] 8.1 Round-trip test: register a tenant, save, load by id, assert identical observable state
-- [ ] 8.2 `findByEmail`: found for an existing tenant, empty for a non-existent one
-- [ ] 8.3 Duplicate email is rejected with `DuplicateEmailException`, original tenant unchanged
-- [ ] 8.4 Issuing and rotating an API token, saving, and reloading reflects the same active/revoked
+- [x] 8.1 Round-trip test: register a tenant, save, load by id, assert identical observable state
+- [x] 8.2 `findByEmail`: found for an existing tenant, empty for a non-existent one
+- [x] 8.3 Duplicate email is rejected with `DuplicateEmailException`, original tenant unchanged
+- [x] 8.4 Issuing and rotating an API token, saving, and reloading reflects the same active/revoked
       state as before saving
-- [ ] 8.5 `findByActiveTokenHash`: resolves the owning tenant for an active token hash, returns
+- [x] 8.5 `findByActiveTokenHash`: resolves the owning tenant for an active token hash, returns
       empty for a revoked/rotated-away token hash
 
 ## 9. Resource persistence integration tests (Testcontainers PostgreSQL)
