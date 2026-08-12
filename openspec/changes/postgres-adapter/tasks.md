@@ -102,10 +102,12 @@
 
 ## 10. Verification and wrap-up
 
-- [ ] 10.1 Run `mvn verify` for `rls-domain`, `rls-application`, `rls-adapter-persistence`;
+- [x] 10.1 Run `mvn verify` for `rls-domain`, `rls-application`, `rls-adapter-persistence`;
       confirm every scenario in `specs/tenant-persistence/spec.md` and
-      `specs/resource-persistence/spec.md` is covered by a passing test
-- [ ] 10.2 Update `README.md` module list/build notes to reflect `rls-adapter-persistence` now
+      `specs/resource-persistence/spec.md` is covered by a passing test — ran a full `mvn verify`
+      across all four modules (including `rls-adapter-redis`, to catch any regression from spec
+      2), `BUILD SUCCESS`; all 11 requirements across both specs map to at least one passing test
+- [x] 10.2 Update `README.md` module list/build notes to reflect `rls-adapter-persistence` now
       existing (PostgreSQL/Testcontainers requirement for running its tests)
-- [ ] 10.3 Commit work on `feature/postgres-adapter` following git-flow commit conventions (no AI
+- [x] 10.3 Commit work on `feature/postgres-adapter` following git-flow commit conventions (no AI
       co-authorship line)
