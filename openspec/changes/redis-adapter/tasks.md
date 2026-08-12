@@ -100,8 +100,10 @@
 
 ## 10. Concurrency proof (atomicity)
 
-- [ ] 10.1 Write a parameterized Testcontainers test, run for all five strategies, that fires more
+- [x] 10.1 Write a parameterized Testcontainers test, run for all five strategies, that fires more
       concurrent requests than `limit` against the same key and asserts exactly `limit` are allowed
+      — 100 concurrent requests via `Flux.flatMap(..., concurrency=100)` against `limit=20`;
+      exactly 20 allowed for every strategy, confirming the atomicity `EVAL` provides
 
 ## 11. Parity with the domain strategies
 
