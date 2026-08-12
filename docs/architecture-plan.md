@@ -194,6 +194,7 @@ o dashboard Thymeleaf (login separado do token de API).
 4. **API REST reativa + Circuit Breaker** — módulo `rls-adapter-rest` (controllers, auth por API
    key, DTOs, ProblemDetail, OpenAPI); módulo `rls-adapter-resilience`; primeira materialização real
    de `rls-bootstrap`; testes e2e com Testcontainers.
+   → **status: implementada e arquivada** (`openspec/changes/archive/2026-08-12-rest-api/`)
 5. **Front Thymeleaf** — módulo `rls-adapter-web`; onboarding, login (Spring Security
    form-login), dashboard CRUD reaproveitando os use cases da API REST; CSRF.
 6. **Observabilidade + Docker** — Actuator/Micrometer, health indicators customizados

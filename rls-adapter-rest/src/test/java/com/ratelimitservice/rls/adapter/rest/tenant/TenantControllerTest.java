@@ -1,0 +1,69 @@
+package com.ratelimitservice.rls.adapter.rest.tenant;
+
+import com.ratelimitservice.rls.adapter.rest.auth.FakeAuthenticatedTenantFilterConfig;
+import com.ratelimitservice.rls.adapter.rest.error.RestExceptionHandler;
+import com.ratelimitservice.rls.application.tenant.RegisterTenantUseCase;
+import com.ratelimitservice.rls.application.tenant.RotateApiTokenUseCase;
+import com.ratelimitservice.rls.application.tenant.port.DuplicateEmailException;
+import com.ratelimitservice.rls.domain.shared.TenantId;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
+import org.springframework.context.annotation.Import;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.test.web.reactive.server.WebTestClient;
+import reactor.core.publisher.Mono;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
+
+@WebFluxTest(TenantController.class)
+@Import({RestExceptionHandler.class, FakeAuthenticatedTenantFilterConfig.class})
+class TenantControllerTest {
+
+    @Autowired
+    private WebTestClient webTestClient;
+
+    @MockitoBean
+    private RegisterTenantUseCase registerTenantUseCase;
+
+    @MockitoBean
+    private RotateApiTokenUseCase rotateApiTokenUseCase;
+
+    @Test
+    void registrationReturnsCreatedWithTenantIdAndToken() {
+        TenantId tenantId = TenantId.generate();
+        when(registerTenantUseCase.register(any(), any(), any(), any()))
+                .thenReturn(Mono.just(new RegisterTenantUseCase.Result(tenantId, "rls_live_abc")));
+
+        webTestClient.post().uri("/api/v1/tenants")
+                .bodyValue(new RegisterTenantRequest("Acme Inc", "ops@acme.test", "s3cret"))
+                .exchange()
+                .expectStatus().isCreated()
+                .expectBody()
+                .jsonPath("$.tenantId").isEqualTo(tenantId.value().toString())
+                .jsonPath("$.apiToken").isEqualTo("rls_live_abc");
+    }
+
+    @Test
+    void registrationWithDuplicateEmailReturnsConflict() {
+        when(registerTenantUseCase.register(any(), any(), any(), any()))
+                .thenReturn(Mono.error(new DuplicateEmailException("dup@acme.test")));
+
+        webTestClient.post().uri("/api/v1/tenants")
+                .bodyValue(new RegisterTenantRequest("Acme Inc", "dup@acme.test", "s3cret"))
+                .exchange()
+                .expectStatus().isEqualTo(409);
+    }
+
+    @Test
+    void rotationReturnsOkWithNewToken() {
+        when(rotateApiTokenUseCase.rotate(any())).thenReturn(Mono.just("rls_live_new"));
+
+        webTestClient.post().uri("/api/v1/tokens/rotate")
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody()
+                .jsonPath("$.apiToken").isEqualTo("rls_live_new");
+    }
+}

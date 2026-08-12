@@ -34,10 +34,13 @@ Modules (added incrementally, one per spec):
   strategy); integration tests use Testcontainers, so **Docker must be running** to execute them
 - `rls-adapter-persistence` — tenant/resource persistence via PostgreSQL + R2DBC, schema managed
   by Flyway; integration tests use Testcontainers (PostgreSQL), so **Docker must be running**
-- `rls-adapter-resilience` — circuit breaker decorator
-- `rls-adapter-rest` — reactive REST API
+- `rls-adapter-resilience` — circuit breaker decorator (Resilience4j), the single global circuit
+  breaker guarding `RateLimitEvaluationPort`
+- `rls-adapter-rest` — reactive REST API (tenant onboarding, resource management, rate-limit check,
+  API key auth via `Authorization: Bearer`, OpenAPI/Swagger UI)
 - `rls-adapter-web` — Thymeleaf front end
-- `rls-bootstrap` — Spring Boot application assembly
+- `rls-bootstrap` — Spring Boot application assembly (composition root wiring every adapter and use
+  case together, plus `application.yml`)
 
 ## Git workflow
 
@@ -72,5 +75,32 @@ mvn -pl rls-adapter-persistence -am verify
 ```
 
 Modules existing so far: `rls-domain`, `rls-application`, `rls-adapter-redis`,
-`rls-adapter-persistence`. The remaining modules listed above are added incrementally by later
-OpenSpec changes.
+`rls-adapter-persistence`, `rls-adapter-resilience`, `rls-adapter-rest`, `rls-bootstrap`.
+`rls-adapter-web` (the Thymeleaf front end) is added by a later OpenSpec change.
+
+## Running locally
+
+`rls-bootstrap` is the runnable application. It needs a real Redis and PostgreSQL — not just the
+ephemeral Testcontainers instances the test suite spins up — so start them first, e.g.:
+
+```
+docker run -d --name rls-redis -p 6379:6379 redis:7-alpine
+docker run -d --name rls-postgres -p 5432:5432 -e POSTGRES_USER=rls -e POSTGRES_PASSWORD=rls -e POSTGRES_DB=rls postgres:16-alpine
+```
+
+Then run the application from the repository root:
+
+```
+mvn -pl rls-bootstrap -am spring-boot:run
+```
+
+Connection details default to `localhost` and the ports above; override via the `REDIS_HOST`,
+`REDIS_PORT`, `POSTGRES_HOST`, `POSTGRES_PORT`, `POSTGRES_DATABASE`, `POSTGRES_USERNAME`, and
+`POSTGRES_PASSWORD` environment variables (see `rls-bootstrap/src/main/resources/application.yml`).
+Flyway migrates the schema automatically on startup. Once running:
+
+- `POST http://localhost:8080/api/v1/tenants` — register a tenant, get back an API token
+- `http://localhost:8080/swagger-ui.html` — interactive API docs
+- `http://localhost:8080/v3/api-docs` — raw OpenAPI spec
+
+A one-command Docker Compose setup (app + Redis + PostgreSQL) is a later OpenSpec change's scope.

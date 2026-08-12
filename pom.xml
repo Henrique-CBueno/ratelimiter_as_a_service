@@ -25,6 +25,8 @@
         <spring-boot.version>3.5.16</spring-boot.version>
         <testcontainers.version>1.21.4</testcontainers.version>
         <jacoco.version>0.8.15</jacoco.version>
+        <resilience4j.version>2.4.0</resilience4j.version>
+        <springdoc-openapi.version>2.9.0</springdoc-openapi.version>
     </properties>
 
     <modules>
@@ -32,6 +34,9 @@
         <module>rls-application</module>
         <module>rls-adapter-redis</module>
         <module>rls-adapter-persistence</module>
+        <module>rls-adapter-resilience</module>
+        <module>rls-adapter-rest</module>
+        <module>rls-bootstrap</module>
     </modules>
 
     <dependencyManagement>
@@ -54,6 +59,13 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+            <dependency>
+                <groupId>io.github.resilience4j</groupId>
+                <artifactId>resilience4j-bom</artifactId>
+                <version>${resilience4j.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -65,6 +77,11 @@
                     <artifactId>maven-compiler-plugin</artifactId>
                     <configuration>
                         <release>${maven.compiler.release}</release>
+                        <!-- Spring's @PathVariable/@RequestParam (WebFlux) resolve parameter
+                             names via reflection when no explicit name is given; without this
+                             flag they fail at request time with "parameter name information not
+                             available via reflection", not at compile time. -->
+                        <parameters>true</parameters>
                     </configuration>
                 </plugin>
                 <plugin>
