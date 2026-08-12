@@ -23,14 +23,14 @@
 
 ## 4. Tenant aggregate (rls-domain) — capability: tenant-management
 
-- [ ] 4.1 Write failing tests for tenant registration (valid case, invalid email) per `specs/tenant-management/spec.md`
-- [ ] 4.2 Implement `Tenant` aggregate (name, email, passwordHash, status, defaultFallbackPolicy) to pass the tests
-- [ ] 4.3 Write failing tests for status lifecycle (`suspend`/`reactivate`)
-- [ ] 4.4 Implement `suspend()`/`reactivate()` behavior
-- [ ] 4.5 Write failing tests for `ApiToken` issuance and rotation (including "no active token" case)
-- [ ] 4.6 Implement `ApiToken` entity and `issueApiToken()`/`rotateApiToken()` on `Tenant`
-- [ ] 4.7 Write failing test asserting no method exposes a raw/plaintext credential
-- [ ] 4.8 Confirm all `tenant-management` scenarios from the spec are covered by passing tests
+- [x] 4.1 Write failing tests for tenant registration (valid case, invalid email) per `specs/tenant-management/spec.md`
+- [x] 4.2 Implement `Tenant` aggregate (name, email, passwordHash, status, defaultFallbackPolicy) to pass the tests
+- [x] 4.3 Write failing tests for status lifecycle (`suspend`/`reactivate`)
+- [x] 4.4 Implement `suspend()`/`reactivate()` behavior
+- [x] 4.5 Write failing tests for `ApiToken` issuance and rotation (including "no active token" case)
+- [x] 4.6 Implement `ApiToken` entity and `issueApiToken()`/`rotateApiToken()` on `Tenant` — token generation/hashing itself is delegated to the application layer (future spec), consistent with how `passwordHash` is handled; the aggregate only accepts an already-computed hash + prefix
+- [x] 4.7 Write failing test asserting no method exposes a raw/plaintext credential
+- [x] 4.8 Confirm all `tenant-management` scenarios from the spec are covered by passing tests
 
 ## 5. RateLimitResource aggregate (rls-domain) — capability: rate-limit-resource-configuration
 
