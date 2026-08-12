@@ -1,10 +1,13 @@
 ## 1. Setup
 
-- [ ] 1.1 Create `feature/redis-adapter` branch from `develop`
-- [ ] 1.2 Add `rls-adapter-redis` module to the parent `pom.xml`; add Spring Data Redis Reactive
+- [x] 1.1 Create `feature/redis-adapter` branch from `develop`
+- [x] 1.2 Add `rls-adapter-redis` module to the parent `pom.xml`; add Spring Data Redis Reactive
       (Lettuce) as a main dependency and the Testcontainers Redis module as a test dependency,
-      depending on `rls-application` (main) and `rls-domain` (test scope, for parity tests)
-- [ ] 1.3 Verify `mvn -pl rls-adapter-redis -am compile` succeeds with the empty module skeleton
+      depending on `rls-application` (main) and `rls-domain` (test scope, for parity tests) —
+      used the raw `spring-data-redis` + `lettuce-core` artifacts (not the Boot starter) and the
+      generic Testcontainers module (`GenericContainer` with the `redis` image), since no
+      dedicated first-party Testcontainers Redis module exists and no Spring Boot app exists yet
+- [x] 1.3 Verify `mvn -pl rls-adapter-redis -am compile` succeeds with the empty module skeleton
 
 ## 2. RateLimitEvaluationPort (rls-application)
 
