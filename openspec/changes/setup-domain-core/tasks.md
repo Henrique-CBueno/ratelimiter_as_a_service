@@ -34,15 +34,15 @@
 
 ## 5. RateLimitResource aggregate (rls-domain) — capability: rate-limit-resource-configuration
 
-- [ ] 5.1 Write failing tests for resource creation (valid case, non-positive quota rejected) per `specs/rate-limit-resource-configuration/spec.md`
-- [ ] 5.2 Implement `RateLimitResource` aggregate (tenantId, resourceKey, strategyType, quota, fallbackPolicy nullable, enabled) to pass the tests
-- [ ] 5.3 Write failing tests for fallback policy inheritance (unset vs explicit)
-- [ ] 5.4 Implement fallback policy resolution helper (`resolveFallbackPolicy(tenant)` or equivalent)
-- [ ] 5.5 Write failing tests for enable/disable (soft delete)
-- [ ] 5.6 Implement `enable()`/`disable()`
-- [ ] 5.7 Write failing tests for `reconfigure()` (valid change, invalid quota rejected without mutating state)
-- [ ] 5.8 Implement `reconfigure(newStrategyType, newQuota)`
-- [ ] 5.9 Confirm all `rate-limit-resource-configuration` scenarios from the spec are covered by passing tests
+- [x] 5.1 Write failing tests for resource creation (valid case, non-positive quota rejected) per `specs/rate-limit-resource-configuration/spec.md` — since `Quota` already makes non-positive limit/window unrepresentable (group 3), the "invalid quota" case is exercised here as a null-quota rejection at the aggregate boundary
+- [x] 5.2 Implement `RateLimitResource` aggregate (tenantId, resourceKey, strategyType, quota, fallbackPolicy nullable, enabled) to pass the tests
+- [x] 5.3 Write failing tests for fallback policy inheritance (unset vs explicit)
+- [x] 5.4 Implement fallback policy resolution helper (`resolveFallbackPolicy(tenant)` or equivalent)
+- [x] 5.5 Write failing tests for enable/disable (soft delete)
+- [x] 5.6 Implement `enable()`/`disable()`
+- [x] 5.7 Write failing tests for `reconfigure()` (valid change, invalid quota rejected without mutating state)
+- [x] 5.8 Implement `reconfigure(newStrategyType, newQuota)`
+- [x] 5.9 Confirm all `rate-limit-resource-configuration` scenarios from the spec are covered by passing tests
 
 ## 6. Rate limit strategies (rls-domain) — capability: rate-limit-strategy-evaluation
 
