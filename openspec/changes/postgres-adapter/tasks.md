@@ -38,12 +38,13 @@
 
 ## 4. Secret hashing (SecretHasherPort)
 
-- [ ] 4.1 Define `SecretHasherPort` in `rls-application` (`hash(raw): String`,
+- [x] 4.1 Define `SecretHasherPort` in `rls-application` (`hash(raw): String`,
       `matches(raw, hash): boolean`)
-- [ ] 4.2 Write failing tests for the BCrypt-based implementation: a hash verifies against the
+- [x] 4.2 Write failing tests for the BCrypt-based implementation: a hash verifies against the
       secret it was created from, fails against a different secret, and is not equal to the raw
-      secret itself
-- [ ] 4.3 Implement `BCryptSecretHasherAdapter` in `rls-adapter-persistence` using
+      secret itself — also asserted BCrypt's salting means hashing the same secret twice yields
+      different hashes, both still verifying correctly
+- [x] 4.3 Implement `BCryptSecretHasherAdapter` in `rls-adapter-persistence` using
       `spring-security-crypto`'s `BCryptPasswordEncoder`
 
 ## 5. Repository ports (rls-application)
