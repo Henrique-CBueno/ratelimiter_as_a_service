@@ -31,6 +31,7 @@
         <module>rls-domain</module>
         <module>rls-application</module>
         <module>rls-adapter-redis</module>
+        <module>rls-adapter-persistence</module>
     </modules>
 
     <dependencyManagement>

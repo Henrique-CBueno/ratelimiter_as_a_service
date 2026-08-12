@@ -27,6 +27,14 @@ public final class ApiToken {
         return new ApiToken(UUID.randomUUID(), tokenHash, tokenPrefix, now, null);
     }
 
+    static ApiToken restore(UUID id, String tokenHash, String tokenPrefix, Instant createdAt, Instant revokedAt) {
+        Objects.requireNonNull(id, "id must not be null");
+        Objects.requireNonNull(tokenHash, "tokenHash must not be null");
+        Objects.requireNonNull(tokenPrefix, "tokenPrefix must not be null");
+        Objects.requireNonNull(createdAt, "createdAt must not be null");
+        return new ApiToken(id, tokenHash, tokenPrefix, createdAt, revokedAt);
+    }
+
     void revoke(Instant now) {
         this.revokedAt = Objects.requireNonNull(now, "now must not be null");
     }
