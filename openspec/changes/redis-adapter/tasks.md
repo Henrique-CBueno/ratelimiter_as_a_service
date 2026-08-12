@@ -11,10 +11,11 @@
 
 ## 2. RateLimitEvaluationPort (rls-application)
 
-- [ ] 2.1 Define `RateLimitEvaluationPort` interface in `rls-application`
+- [x] 2.1 Define `RateLimitEvaluationPort` interface in `rls-application`
       (`Mono<RateLimitDecision> evaluate(RateLimitKey key, StrategyType strategyType, Quota quota)`),
       using only domain types
-- [ ] 2.2 Verify `rls-application` still compiles with zero Redis-specific imports
+- [x] 2.2 Verify `rls-application` still compiles with zero Redis-specific imports — confirmed via
+      `grep -ri redis rls-application/src` (no matches) plus successful compile
 
 ## 3. Test infrastructure
 
