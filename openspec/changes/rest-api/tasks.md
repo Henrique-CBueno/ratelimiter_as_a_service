@@ -1,17 +1,19 @@
 ## 1. Setup
 
-- [ ] 1.1 Create `feature/rest-api` branch from `develop`
-- [ ] 1.2 Add `rls-adapter-resilience`, `rls-adapter-rest`, and `rls-bootstrap` modules to the
-      parent `pom.xml`
-- [ ] 1.3 `rls-adapter-resilience`: add `resilience4j-circuitbreaker` and `resilience4j-reactor`
+- [x] 1.1 Create `feature/rest-api` branch from `develop`
+- [x] 1.2 Add `rls-adapter-resilience`, `rls-adapter-rest`, and `rls-bootstrap` modules to the
+      parent `pom.xml` — also added a `resilience4j-bom` import (2.4.0) to the parent's
+      `dependencyManagement`, and `springdoc-openapi.version` (2.9.0, the Spring Boot 3.x-compatible
+      line — 3.x targets a newer Spring generation)
+- [x] 1.3 `rls-adapter-resilience`: add `resilience4j-circuitbreaker` and `resilience4j-reactor`
       dependencies, depending on `rls-application`
-- [ ] 1.4 `rls-adapter-rest`: add `spring-boot-starter-webflux` and
+- [x] 1.4 `rls-adapter-rest`: add `spring-boot-starter-webflux` and
       `springdoc-openapi-starter-webflux-ui`, depending on `rls-application` and `rls-domain`
-- [ ] 1.5 `rls-bootstrap`: add `spring-boot-starter` and the `spring-boot-maven-plugin`, depending
-      on `rls-domain`, `rls-application`, and every adapter module built so far
+- [x] 1.5 `rls-bootstrap`: add `spring-boot-starter-webflux` and the `spring-boot-maven-plugin`,
+      depending on `rls-domain`, `rls-application`, and every adapter module built so far
       (`rls-adapter-redis`, `rls-adapter-persistence`, `rls-adapter-resilience`,
       `rls-adapter-rest`)
-- [ ] 1.6 Verify all three new modules compile empty (`mvn -pl rls-adapter-resilience,rls-adapter-rest,rls-bootstrap -am compile`)
+- [x] 1.6 Verify all three new modules compile empty (`mvn -pl rls-adapter-resilience,rls-adapter-rest,rls-bootstrap -am compile`)
 
 ## 2. Application use cases: tenant
 

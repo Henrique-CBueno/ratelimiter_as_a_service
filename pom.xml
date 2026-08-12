@@ -25,6 +25,8 @@
         <spring-boot.version>3.5.16</spring-boot.version>
         <testcontainers.version>1.21.4</testcontainers.version>
         <jacoco.version>0.8.15</jacoco.version>
+        <resilience4j.version>2.4.0</resilience4j.version>
+        <springdoc-openapi.version>2.9.0</springdoc-openapi.version>
     </properties>
 
     <modules>
@@ -32,6 +34,9 @@
         <module>rls-application</module>
         <module>rls-adapter-redis</module>
         <module>rls-adapter-persistence</module>
+        <module>rls-adapter-resilience</module>
+        <module>rls-adapter-rest</module>
+        <module>rls-bootstrap</module>
     </modules>
 
     <dependencyManagement>
@@ -51,6 +56,13 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-dependencies</artifactId>
                 <version>${spring-boot.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>io.github.resilience4j</groupId>
+                <artifactId>resilience4j-bom</artifactId>
+                <version>${resilience4j.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
