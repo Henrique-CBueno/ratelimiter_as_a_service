@@ -49,11 +49,11 @@
 
 ## 5. Repository ports (rls-application)
 
-- [ ] 5.1 Define `TenantRepositoryPort` (`save`, `findById`, `findByEmail`,
+- [x] 5.1 Define `TenantRepositoryPort` (`save`, `findById`, `findByEmail`,
       `findByActiveTokenHash`)
-- [ ] 5.2 Define `ResourceRepositoryPort` (`save`, `findById`, `findByTenantAndKey`,
+- [x] 5.2 Define `ResourceRepositoryPort` (`save`, `findById`, `findByTenantAndKey`,
       `findAllByTenant`)
-- [ ] 5.3 Define `DuplicateEmailException` and `DuplicateResourceKeyException` in `rls-application`
+- [x] 5.3 Define `DuplicateEmailException` and `DuplicateResourceKeyException` in `rls-application`
       for the ports to throw instead of leaking R2DBC/PostgreSQL-specific exceptions
 
 ## 6. Tenant repository adapter
