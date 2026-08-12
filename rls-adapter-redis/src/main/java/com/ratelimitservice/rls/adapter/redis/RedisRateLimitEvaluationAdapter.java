@@ -20,7 +20,8 @@ public final class RedisRateLimitEvaluationAdapter implements RateLimitEvaluatio
 
     private static final Map<StrategyType, String> SCRIPT_RESOURCES = Map.of(
             StrategyType.FIXED_WINDOW, "scripts/fixed_window.lua",
-            StrategyType.SLIDING_WINDOW_LOG, "scripts/sliding_window_log.lua"
+            StrategyType.SLIDING_WINDOW_LOG, "scripts/sliding_window_log.lua",
+            StrategyType.SLIDING_WINDOW_COUNTER, "scripts/sliding_window_counter.lua"
     );
 
     private final ReactiveRedisTemplate<String, String> redisTemplate;

@@ -52,10 +52,18 @@
 
 ## 6. Sliding Window Counter strategy script
 
-- [ ] 6.1 Write `sliding_window_counter.lua` (two `STRING` buckets, weighted estimate)
-- [ ] 6.2 Wire the script into the adapter
-- [ ] 6.3 Write a Testcontainers test: allow under weighted estimate, deny at estimate, window
-      rollover shifting current into previous
+- [x] 6.1 Write `sliding_window_counter.lua` (weighted estimate) — used a single `HASH` with
+      `prev`/`curr`/`window_start_ms` fields mirroring `SlidingWindowCounterStrategy.java`
+      field-for-field (rather than the two-independent-TTL'd-`STRING`-buckets sketch from the
+      design doc), so the Lua rollover logic can match the domain implementation exactly and pass
+      parity tests; documented as an implementation refinement, not a behavior change
+- [x] 6.2 Wire the script into the adapter
+- [x] 6.3 Write a Testcontainers test: allow under weighted estimate, deny at estimate, window
+      rollover shifting current into previous — seeded state directly via `HSET` and anchored all
+      "now" offsets to Redis's own clock (`fetchRedisNowMs()`, added to `AbstractRedisIT`) rather
+      than the JVM's, and used a wide margin (not an exact boundary) for the deny case, since real
+      network latency between seeding and evaluating makes boundary-exact assertions flaky against
+      live infrastructure
 
 ## 7. Token Bucket strategy script
 
