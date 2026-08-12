@@ -71,15 +71,19 @@
 
 ## 5. Circuit breaker adapter (rls-adapter-resilience)
 
-- [ ] 5.1 Define `RateLimitEvaluationUnavailableException` in `rls-application`
-- [ ] 5.2 Implement `ResilientRateLimitEvaluationAdapter` in `rls-adapter-resilience`: wraps a
+- [x] 5.1 Define `RateLimitEvaluationUnavailableException` in `rls-application` — already done at
+      4.3 (pulled forward); confirmed present
+- [x] 5.2 Implement `ResilientRateLimitEvaluationAdapter` in `rls-adapter-resilience`: wraps a
       delegate `RateLimitEvaluationPort`, applies a constructor-injected `CircuitBreaker` via
       `CircuitBreakerOperator`, maps circuit-open/any evaluation failure to
       `RateLimitEvaluationUnavailableException`
-- [ ] 5.3 Write a test using a real `CircuitBreaker` (low failure/volume thresholds) and a fake
+- [x] 5.3 Write a test using a real `CircuitBreaker` (low failure/volume thresholds) and a fake
       delegate that always fails: confirm repeated failures open the circuit, and once open,
       further calls fail fast with `RateLimitEvaluationUnavailableException` without invoking the
-      delegate again
+      delegate again — the fake delegate initially incremented its call counter eagerly (outside
+      `Mono.defer`), which doesn't reflect how a real reactive adapter behaves (I/O only at
+      subscription time) and made the circuit breaker's gating look like it wasn't working; fixed
+      by deferring the side effect to subscription time, matching real adapter semantics
 
 ## 6. REST: tenant onboarding endpoints
 
