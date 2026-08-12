@@ -6,6 +6,7 @@ import com.ratelimitservice.rls.application.resource.port.ResourceRepositoryPort
 import com.ratelimitservice.rls.domain.ratelimit.Quota;
 import com.ratelimitservice.rls.domain.ratelimit.RateLimitDecision;
 import com.ratelimitservice.rls.domain.ratelimit.RateLimitKey;
+import com.ratelimitservice.rls.domain.ratelimit.StrategyType;
 import com.ratelimitservice.rls.domain.resource.RateLimitResource;
 import com.ratelimitservice.rls.domain.shared.ClientIp;
 import com.ratelimitservice.rls.domain.shared.FallbackPolicy;
@@ -25,9 +26,10 @@ public final class CheckRateLimitUseCase {
         this.rateLimitEvaluationPort = rateLimitEvaluationPort;
     }
 
-    public Mono<RateLimitDecision> check(Tenant tenant, String resourceKey, ClientIp clientIp) {
+    public Mono<CheckResult> check(Tenant tenant, String resourceKey, ClientIp clientIp) {
         return resourceRepositoryPort.findByTenantAndKey(tenant.id(), resourceKey)
-                .flatMap(resource -> evaluate(tenant, resource, clientIp));
+                .flatMap(resource -> evaluate(tenant, resource, clientIp)
+                        .map(decision -> new CheckResult(decision, resource.strategyType())));
     }
 
     private Mono<RateLimitDecision> evaluate(Tenant tenant, RateLimitResource resource, ClientIp clientIp) {
@@ -46,5 +48,8 @@ public final class CheckRateLimitUseCase {
                 ? RateLimitDecision.allow(quota.limit(), quota.limit(), resetAt)
                 : RateLimitDecision.deny(quota.limit(), resetAt, quota.window());
         return decision.asDegraded();
+    }
+
+    public record CheckResult(RateLimitDecision decision, StrategyType strategyType) {
     }
 }

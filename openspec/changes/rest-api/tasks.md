@@ -144,12 +144,19 @@
 
 ## 9. REST: rate-limit check endpoint
 
-- [ ] 9.1 Define request/response DTOs for the check endpoint
-- [ ] 9.2 Implement `RateLimitCheckController`: `POST /api/v1/ratelimit/check`, mapping the
+- [x] 9.1 Define request/response DTOs for the check endpoint — discovered `RateLimitDecision`
+      (spec 1) has no `strategyType` field, but the response needs one; rather than duplicating a
+      resource lookup in the REST layer, changed `CheckRateLimitUseCase.check(...)` (group 4) to
+      return a `CheckResult(RateLimitDecision, StrategyType)` wrapper instead of the bare decision
+      (updated `CheckRateLimitUseCaseTest` accordingly — same tests, new return shape)
+- [x] 9.2 Implement `RateLimitCheckController`: `POST /api/v1/ratelimit/check`, mapping the
       resulting decision to `200`/`429` plus `RateLimit-Limit`/`RateLimit-Remaining`/
-      `RateLimit-Reset`/`Retry-After` headers
-- [ ] 9.3 Write `WebTestClient` slice tests: allowed (`200` + headers), denied (`429` +
-      `Retry-After`), unconfigured resource (`404`), unauthenticated (`401`)
+      `RateLimit-Reset`/`Retry-After` headers — generalized `ResourceNotFoundException` (group 8)
+      with a `forKey(String)` factory alongside `forId(UUID)`, since this endpoint identifies the
+      resource by key, not id
+- [x] 9.3 Write `WebTestClient` slice tests: allowed (`200` + headers), denied (`429` +
+      `Retry-After`), unconfigured resource (`404`). Unauthenticated-`401` remains the auth
+      filter's own test's responsibility (groups 6/8's rationale applies here too)
 
 ## 10. REST: error handling
 

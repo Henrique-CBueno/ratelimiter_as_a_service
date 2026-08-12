@@ -27,16 +27,17 @@ class CheckRateLimitUseCaseTest {
     }
 
     @Test
-    void evaluatesAConfiguredResourceAndReturnsThePortsDecision() {
+    void evaluatesAConfiguredResourceAndReturnsThePortsDecisionAndStrategyType() {
         Tenant tenant = newTenant(FallbackPolicy.FAIL_OPEN);
         RateLimitResource resource = RateLimitResource.create(tenant.id(), "/login", StrategyType.FIXED_WINDOW, Quota.of(10, Duration.ofMinutes(1)));
         resourceRepository.save(resource).block();
         RateLimitDecision expected = RateLimitDecision.allow(10, 9, Instant.parse("2026-01-01T00:00:00Z"));
         evaluationPort.willReturn(expected);
 
-        RateLimitDecision decision = useCase.check(tenant, "/login", new ClientIp("203.0.113.1")).block();
+        CheckRateLimitUseCase.CheckResult result = useCase.check(tenant, "/login", new ClientIp("203.0.113.1")).block();
 
-        assertThat(decision).isEqualTo(expected);
+        assertThat(result.decision()).isEqualTo(expected);
+        assertThat(result.strategyType()).isEqualTo(StrategyType.FIXED_WINDOW);
         assertThat(evaluationPort.lastKey().tenantId()).isEqualTo(tenant.id());
         assertThat(evaluationPort.lastKey().resourceId()).isEqualTo(resource.id());
         assertThat(evaluationPort.lastKey().strategyType()).isEqualTo(StrategyType.FIXED_WINDOW);
@@ -46,9 +47,9 @@ class CheckRateLimitUseCaseTest {
     void returnsEmptyWhenTheResourceIsNotConfiguredForTheTenant() {
         Tenant tenant = newTenant(FallbackPolicy.FAIL_OPEN);
 
-        RateLimitDecision decision = useCase.check(tenant, "/unknown", new ClientIp("203.0.113.1")).block();
+        CheckRateLimitUseCase.CheckResult result = useCase.check(tenant, "/unknown", new ClientIp("203.0.113.1")).block();
 
-        assertThat(decision).isNull();
+        assertThat(result).isNull();
     }
 
     @Test
@@ -58,10 +59,10 @@ class CheckRateLimitUseCaseTest {
         resourceRepository.save(resource).block();
         evaluationPort.willFailWith(new RateLimitEvaluationUnavailableException("circuit open"));
 
-        RateLimitDecision decision = useCase.check(tenant, "/login", new ClientIp("203.0.113.1")).block();
+        CheckRateLimitUseCase.CheckResult result = useCase.check(tenant, "/login", new ClientIp("203.0.113.1")).block();
 
-        assertThat(decision.allowed()).isTrue();
-        assertThat(decision.degraded()).isTrue();
+        assertThat(result.decision().allowed()).isTrue();
+        assertThat(result.decision().degraded()).isTrue();
     }
 
     @Test
@@ -72,10 +73,10 @@ class CheckRateLimitUseCaseTest {
         resourceRepository.save(resource).block();
         evaluationPort.willFailWith(new RateLimitEvaluationUnavailableException("circuit open"));
 
-        RateLimitDecision decision = useCase.check(tenant, "/login", new ClientIp("203.0.113.1")).block();
+        CheckRateLimitUseCase.CheckResult result = useCase.check(tenant, "/login", new ClientIp("203.0.113.1")).block();
 
-        assertThat(decision.allowed()).isFalse();
-        assertThat(decision.degraded()).isTrue();
-        assertThat(decision.retryAfter()).isNotNull();
+        assertThat(result.decision().allowed()).isFalse();
+        assertThat(result.decision().degraded()).isTrue();
+        assertThat(result.decision().retryAfter()).isNotNull();
     }
 }

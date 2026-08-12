@@ -68,7 +68,7 @@ public class ResourceController {
         Tenant tenant = authenticatedTenant(exchange);
         return getResourceUseCase.get(tenant.id(), new ResourceId(id))
                 .map(ResourceResponse::from)
-                .switchIfEmpty(Mono.error(new ResourceNotFoundException(id)));
+                .switchIfEmpty(Mono.error(ResourceNotFoundException.forId(id)));
     }
 
     @PutMapping("/{id}")
@@ -78,7 +78,7 @@ public class ResourceController {
         Quota quota = toQuota(request.limit(), request.windowSeconds(), request.burstCapacity());
         return updateResourceUseCase.update(tenant.id(), new ResourceId(id), request.strategyType(), quota)
                 .map(ResourceResponse::from)
-                .switchIfEmpty(Mono.error(new ResourceNotFoundException(id)));
+                .switchIfEmpty(Mono.error(ResourceNotFoundException.forId(id)));
     }
 
     @DeleteMapping("/{id}")
@@ -86,7 +86,7 @@ public class ResourceController {
     public Mono<Void> delete(ServerWebExchange exchange, @PathVariable UUID id) {
         Tenant tenant = authenticatedTenant(exchange);
         return deleteResourceUseCase.delete(tenant.id(), new ResourceId(id))
-                .flatMap(deleted -> Boolean.TRUE.equals(deleted) ? Mono.empty() : Mono.error(new ResourceNotFoundException(id)));
+                .flatMap(deleted -> Boolean.TRUE.equals(deleted) ? Mono.empty() : Mono.error(ResourceNotFoundException.forId(id)));
     }
 
     private Tenant authenticatedTenant(ServerWebExchange exchange) {
