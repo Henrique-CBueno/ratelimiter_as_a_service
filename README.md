@@ -46,7 +46,9 @@ Modules (added incrementally, one per spec):
   uses. Independent of the REST API's `Authorization: Bearer` auth — see design decision 3 in
   `openspec/changes/archive/2026-08-12-thymeleaf-frontend/design.md`
 - `rls-bootstrap` — Spring Boot application assembly (composition root wiring every adapter and use
-  case together, plus `application.yml`)
+  case together, plus `application.yml`); also exposes Actuator health (`/actuator/health`,
+  including the rate-limit circuit breaker's own state) and Prometheus metrics
+  (`/actuator/prometheus`)
 
 ## Git workflow
 
@@ -112,5 +114,23 @@ Flyway migrates the schema automatically on startup. Once running:
   REST API's bearer token auth)
 - `http://localhost:8080/swagger-ui.html` — interactive API docs
 - `http://localhost:8080/v3/api-docs` — raw OpenAPI spec
+- `http://localhost:8080/actuator/health` — health, including the rate-limit circuit breaker's own
+  state (`DEGRADED`, not `DOWN`, while it's open — the app is still serving traffic via fallback)
+- `http://localhost:8080/actuator/prometheus` — Prometheus-formatted metrics
 
-A one-command Docker Compose setup (app + Redis + PostgreSQL) is a later OpenSpec change's scope.
+## Running with Docker Compose
+
+The repository root has a multi-stage `Dockerfile` and a `docker-compose.yml` that starts Redis,
+PostgreSQL, and **two** application instances sharing them — the setup used to actually
+demonstrate the stateless/horizontal-scalability design, not just claim it:
+
+```
+docker compose up --build
+```
+
+- App instance 1: `http://localhost:8081`
+- App instance 2: `http://localhost:8082`
+
+Both instances enforce rate limits through the same Redis-backed state, so alternating requests
+between the two ports for the same tenant/resource/client IP combination is enforced exactly as if
+every request had gone to a single instance. `docker compose down` tears the stack down.

@@ -1,0 +1,49 @@
+services:
+  redis:
+    image: redis:7-alpine
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 2s
+      timeout: 3s
+      retries: 10
+
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: rls
+      POSTGRES_PASSWORD: rls
+      POSTGRES_DB: rls
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U rls -d rls"]
+      interval: 2s
+      timeout: 3s
+      retries: 10
+
+  # Two instances of the same image, sharing Redis/Postgres, exposed on different host ports —
+  # this is the topology the horizontal-scalability verification (spec 6, group 7) exercises: the
+  # same rate limit enforced correctly no matter which instance a request lands on.
+  app1:
+    build: .
+    ports:
+      - "8081:8080"
+    environment:
+      REDIS_HOST: redis
+      POSTGRES_HOST: postgres
+    depends_on:
+      redis:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+
+  app2:
+    build: .
+    ports:
+      - "8082:8080"
+    environment:
+      REDIS_HOST: redis
+      POSTGRES_HOST: postgres
+    depends_on:
+      redis:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
