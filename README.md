@@ -51,4 +51,22 @@ This repository follows the git-flow branching model:
 
 ## Building
 
-Build instructions will be added once the Maven module skeleton exists (see `openspec/changes/setup-domain-core/tasks.md`).
+Requires JDK 21+ and Maven. From the repository root:
+
+```
+mvn verify
+```
+
+This compiles every module and runs the full test suite (unit tests via Surefire; integration
+tests via Failsafe, once modules that need them — e.g. `rls-adapter-redis`,
+`rls-adapter-persistence` — exist). A JaCoCo coverage report is generated per module at
+`target/site/jacoco/index.html`.
+
+To build/test a single module (and the modules it depends on), use `-pl` with `-am`, e.g.:
+
+```
+mvn -pl rls-domain -am test
+```
+
+Currently only `rls-domain` and `rls-application` exist; the remaining modules listed above are
+added incrementally by later OpenSpec changes.

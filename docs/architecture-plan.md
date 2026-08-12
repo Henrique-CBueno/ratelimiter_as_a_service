@@ -223,6 +223,7 @@ Cada spec vira uma `feature/*` branch a partir de `develop`, seguindo git flow.
 
 ## Specs OpenSpec relacionadas
 
-- `openspec/changes/setup-domain-core/` — spec 1 (proposal, design, specs e tasks já gerados e
-  validados; pronta para `/opsx:apply`).
+- `openspec/changes/archive/2026-08-12-setup-domain-core/` — spec 1, **implementada e arquivada**.
+  Capabilities `rate-limit-strategy-evaluation`, `tenant-management` e
+  `rate-limit-resource-configuration` sincronizadas em `openspec/specs/`.
 - Specs 2–6 serão criadas em `openspec/changes/` conforme forem propostas, seguindo esta mesma ordem.
