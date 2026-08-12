@@ -17,17 +17,23 @@
 
 ## 2. Application use cases: tenant
 
-- [ ] 2.1 Write failing tests (fake `TenantRepositoryPort`/`SecretHasherPort`) for
-      `RegisterTenantUseCase`: hashes the password, generates and hashes a new API token, saves
-      the tenant, returns the raw token exactly once; a duplicate-email failure from the port
-      propagates unchanged
-- [ ] 2.2 Implement `RegisterTenantUseCase`
-- [ ] 2.3 Write failing tests for `AuthenticateTenantUseCase`: resolves the tenant for a valid
+- [x] 2.1 Write failing tests (fake `TenantRepositoryPort`/`SecretHasherPort`) for
+      `RegisterTenantUseCase`: hashes the password, generates and fingerprints a new API token,
+      saves the tenant, returns the raw token exactly once; a duplicate-email failure from the
+      port propagates unchanged — while writing `AuthenticateTenantUseCase`'s design it became
+      clear `SecretHasherPort` (BCrypt, salted) cannot back `findByActiveTokenHash` (needs a
+      deterministic lookup value); added `ApiTokenGenerator.fingerprint()` (SHA-256, no port
+      needed) for tokens specifically, keeping `SecretHasherPort` for passwords only — see the
+      `## MODIFIED Requirements` added to `specs/tenant-persistence/spec.md` in this change
+- [x] 2.2 Implement `RegisterTenantUseCase`
+- [x] 2.3 Write failing tests for `AuthenticateTenantUseCase`: resolves the tenant for a valid
       active token hash; returns empty for an unknown or revoked token hash
-- [ ] 2.4 Implement `AuthenticateTenantUseCase`
-- [ ] 2.5 Write failing tests for `RotateApiTokenUseCase`: revokes the previous active token,
+- [x] 2.4 Implement `AuthenticateTenantUseCase`
+- [x] 2.5 Write failing tests for `RotateApiTokenUseCase`: revokes the previous active token,
       issues and persists a new one, returns the new raw token exactly once
-- [ ] 2.6 Implement `RotateApiTokenUseCase`
+- [x] 2.6 Implement `RotateApiTokenUseCase` — confirmed `TenantRepositoryAdapter` (spec 3) needed
+      no changes: it only ever stores/queries whatever hash string it's given, agnostic to how it
+      was computed
 
 ## 3. Application use cases: resource
 
