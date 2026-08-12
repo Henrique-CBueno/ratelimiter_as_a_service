@@ -1,28 +1,24 @@
 package com.ratelimitservice.rls.adapter.rest.tenant;
 
-import com.ratelimitservice.rls.adapter.rest.auth.AuthenticatedTenant;
+import com.ratelimitservice.rls.adapter.rest.auth.FakeAuthenticatedTenantFilterConfig;
 import com.ratelimitservice.rls.adapter.rest.error.RestExceptionHandler;
 import com.ratelimitservice.rls.application.tenant.RegisterTenantUseCase;
 import com.ratelimitservice.rls.application.tenant.RotateApiTokenUseCase;
 import com.ratelimitservice.rls.application.tenant.port.DuplicateEmailException;
-import com.ratelimitservice.rls.domain.shared.FallbackPolicy;
 import com.ratelimitservice.rls.domain.shared.TenantId;
-import com.ratelimitservice.rls.domain.tenant.Tenant;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.reactive.server.WebTestClient;
-import org.springframework.web.server.WebFilter;
 import reactor.core.publisher.Mono;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @WebFluxTest(TenantController.class)
-@Import({RestExceptionHandler.class, TenantControllerTest.TestConfig.class})
+@Import({RestExceptionHandler.class, FakeAuthenticatedTenantFilterConfig.class})
 class TenantControllerTest {
 
     @Autowired
@@ -69,23 +65,5 @@ class TenantControllerTest {
                 .expectStatus().isOk()
                 .expectBody()
                 .jsonPath("$.apiToken").isEqualTo("rls_live_new");
-    }
-
-    /**
-     * This slice only loads {@link TenantController}, not the real
-     * {@code ApiTokenAuthenticationWebFilter} (group 7), so a stand-in filter injects a fixed
-     * authenticated tenant for the rotate endpoint's test. Whether an actually-unauthenticated
-     * request is rejected with 401 is the auth filter's own responsibility and is verified by its
-     * own tests in group 7, not here.
-     */
-    static class TestConfig {
-        @Bean
-        WebFilter fakeAuthenticatedTenantFilter() {
-            Tenant tenant = Tenant.register("Acme Inc", "ops@acme.test", "hashed-secret", FallbackPolicy.FAIL_OPEN);
-            return (exchange, chain) -> {
-                exchange.getAttributes().put(AuthenticatedTenant.ATTRIBUTE, tenant);
-                return chain.filter(exchange);
-            };
-        }
     }
 }

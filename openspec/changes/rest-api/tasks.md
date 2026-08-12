@@ -121,14 +121,26 @@
 
 ## 8. REST: resource management endpoints
 
-- [ ] 8.1 Define request/response DTOs for resource creation, update, and reads
-- [ ] 8.2 Implement `ResourceController`: `POST`, `GET` (list), `GET /{id}`, `PUT /{id}`,
+- [x] 8.1 Define request/response DTOs for resource creation, update, and reads — typed
+      `strategyType`/`fallbackPolicy` fields as the actual domain enums rather than raw strings,
+      so Jackson rejects invalid values at deserialization time for free
+- [x] 8.2 Implement `ResourceController`: `POST`, `GET` (list), `GET /{id}`, `PUT /{id}`,
       `DELETE /{id}`, resolving the authenticated tenant from the exchange attribute set by the
-      auth filter
-- [ ] 8.3 Write `WebTestClient` slice tests: create (`201`), list scoped to tenant, get own
+      auth filter — added `ResourceNotFoundException` (adapter-layer only, not
+      application/domain) mapped to 404 in `RestExceptionHandler`; since the use cases (group 3)
+      already return empty for both "doesn't exist" and "belongs to another tenant", the
+      controller treats both identically for free, satisfying design decision 6 without extra code
+- [x] 8.3 Write `WebTestClient` slice tests: create (`201`), list scoped to tenant, get own
       (`200`) vs. another tenant's (`404`), update own (`200`) vs. another tenant's (`404`),
-      delete own (`204`, soft-deleted) vs. another tenant's (`404`), duplicate key (`409`), every
-      endpoint rejects unauthenticated requests (`401`)
+      delete own (`204`, soft-deleted) vs. another tenant's (`404`), duplicate key (`409`). As in
+      group 6, the unauthenticated-`401` case is the auth filter's own test's responsibility, not
+      each controller slice's. Extracted the fake-authenticated-tenant filter used by both
+      controller slices into a shared `FakeAuthenticatedTenantFilterConfig`. Also hit and fixed a
+      second real pitfall: `@PathVariable UUID id` failed at request time ("parameter name
+      information not available via reflection") because the Maven compiler wasn't passing
+      `-parameters`; added `<parameters>true</parameters>` to the parent POM's compiler plugin
+      config globally, not just here, since every future `@PathVariable`/`@RequestParam` would
+      hit the same issue
 
 ## 9. REST: rate-limit check endpoint
 

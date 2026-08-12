@@ -77,6 +77,11 @@
                     <artifactId>maven-compiler-plugin</artifactId>
                     <configuration>
                         <release>${maven.compiler.release}</release>
+                        <!-- Spring's @PathVariable/@RequestParam (WebFlux) resolve parameter
+                             names via reflection when no explicit name is given; without this
+                             flag they fail at request time with "parameter name information not
+                             available via reflection", not at compile time. -->
+                        <parameters>true</parameters>
                     </configuration>
                 </plugin>
                 <plugin>
