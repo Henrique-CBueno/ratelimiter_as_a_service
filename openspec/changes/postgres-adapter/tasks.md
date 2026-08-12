@@ -73,11 +73,12 @@
 
 ## 7. Resource repository adapter
 
-- [ ] 7.1 Implement row mapping between `rate_limit_resources` and `RateLimitResource` (via
+- [x] 7.1 Implement row mapping between `rate_limit_resources` and `RateLimitResource` (via
       `RateLimitResource.reconstitute(...)`)
-- [ ] 7.2 Implement `save()`, `findById`, `findByTenantAndKey`, `findAllByTenant`
-- [ ] 7.3 Catch the unique `(tenant_id, resource_key)` constraint violation on save and translate
-      it into `DuplicateResourceKeyException`
+- [x] 7.2 Implement `save()`, `findById`, `findByTenantAndKey`, `findAllByTenant`
+- [x] 7.3 Catch the unique `(tenant_id, resource_key)` constraint violation on save and translate
+      it into `DuplicateResourceKeyException` — same SQL-state-23505 detection approach as
+      `TenantRepositoryAdapter`
 
 ## 8. Tenant persistence integration tests (Testcontainers PostgreSQL)
 
