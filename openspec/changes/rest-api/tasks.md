@@ -160,11 +160,17 @@
 
 ## 10. REST: error handling
 
-- [ ] 10.1 Implement a `RestExceptionHandler` mapping `DuplicateEmailException` /
+- [x] 10.1 Implement a `RestExceptionHandler` mapping `DuplicateEmailException` /
       `DuplicateResourceKeyException` → `409`, not-found cases → `404`, authentication failures →
-      `401`, each as an RFC 7807 `ProblemDetail` body
-- [ ] 10.2 Write tests confirming each mapped exception produces the correct status and a
-      well-formed `ProblemDetail` body
+      `401`, each as an RFC 7807 `ProblemDetail` body — already built incrementally across groups
+      6, 8, and 9 as each exception type was introduced; confirmed complete here. Authentication
+      failures have no exception to map: `ApiTokenAuthenticationWebFilter` (group 7) short-circuits
+      with `401` directly, before any handler or exception is involved, so there's nothing for
+      `@ExceptionHandler` to catch for that case
+- [x] 10.2 Write tests confirming each mapped exception produces the correct status and a
+      well-formed `ProblemDetail` body — added a focused `RestExceptionHandlerTest` calling the
+      handler methods directly (status + detail message), complementing the incidental coverage
+      already present in each controller's slice tests
 
 ## 11. rls-bootstrap: composition root
 
