@@ -133,9 +133,11 @@
 
 ## 13. Verification and wrap-up
 
-- [ ] 13.1 Run `mvn verify` for `rls-domain`, `rls-application`, `rls-adapter-redis`; confirm every
-      scenario in `specs/distributed-rate-limit-evaluation/spec.md` is covered by a passing test
-- [ ] 13.2 Update `README.md` module list/build notes to reflect `rls-adapter-redis` now existing
+- [x] 13.1 Run `mvn verify` for `rls-domain`, `rls-application`, `rls-adapter-redis`; confirm every
+      scenario in `specs/distributed-rate-limit-evaluation/spec.md` is covered by a passing test —
+      `BUILD SUCCESS`, 102 domain tests + 5 unit + 31 integration tests in `rls-adapter-redis`; all
+      6 requirements/scenarios in the spec map to at least one passing test
+- [x] 13.2 Update `README.md` module list/build notes to reflect `rls-adapter-redis` now existing
       (Docker/Testcontainers requirement for running its tests)
-- [ ] 13.3 Commit work on `feature/redis-adapter` following git-flow commit conventions (no AI
+- [x] 13.3 Commit work on `feature/redis-adapter` following git-flow commit conventions (no AI
       co-authorship line)

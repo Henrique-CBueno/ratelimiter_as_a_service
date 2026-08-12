@@ -29,8 +29,9 @@ Test-Driven Development. See `docs/architecture-plan.md` for the full architectu
 Modules (added incrementally, one per spec):
 
 - `rls-domain` — pure Java domain model (aggregates, value objects, the five rate-limit strategies)
-- `rls-application` — use cases and ports
-- `rls-adapter-redis` — distributed counters via Redis + Lua
+- `rls-application` — use cases and ports (`RateLimitEvaluationPort`)
+- `rls-adapter-redis` — distributed counters via Redis + Lua (one atomic `EVAL` script per
+  strategy); integration tests use Testcontainers, so **Docker must be running** to execute them
 - `rls-adapter-persistence` — tenant/resource persistence via PostgreSQL + R2DBC
 - `rls-adapter-resilience` — circuit breaker decorator
 - `rls-adapter-rest` — reactive REST API
@@ -51,22 +52,23 @@ This repository follows the git-flow branching model:
 
 ## Building
 
-Requires JDK 21+ and Maven. From the repository root:
+Requires JDK 21+, Maven, and (for `rls-adapter-redis`'s integration tests) a running Docker
+daemon — its tests start a real `redis:7-alpine` container via Testcontainers. From the repository
+root:
 
 ```
 mvn verify
 ```
 
-This compiles every module and runs the full test suite (unit tests via Surefire; integration
-tests via Failsafe, once modules that need them — e.g. `rls-adapter-redis`,
-`rls-adapter-persistence` — exist). A JaCoCo coverage report is generated per module at
-`target/site/jacoco/index.html`.
+This compiles every module and runs the full test suite: unit tests via Surefire (`*Test.java`,
+no external dependencies) and integration tests via Failsafe (`*IT.java`, needs Docker). A JaCoCo
+coverage report is generated per module at `target/site/jacoco/index.html`.
 
 To build/test a single module (and the modules it depends on), use `-pl` with `-am`, e.g.:
 
 ```
-mvn -pl rls-domain -am test
+mvn -pl rls-adapter-redis -am verify
 ```
 
-Currently only `rls-domain` and `rls-application` exist; the remaining modules listed above are
-added incrementally by later OpenSpec changes.
+Modules existing so far: `rls-domain`, `rls-application`, `rls-adapter-redis`. The remaining
+modules listed above are added incrementally by later OpenSpec changes.
