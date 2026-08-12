@@ -44,7 +44,7 @@ Modules (added incrementally, one per spec):
   sessions stay stateless across instances), and a resource-management dashboard
   (`/app/resources`, `/app/settings`) that calls the same `rls-application` use cases the REST API
   uses. Independent of the REST API's `Authorization: Bearer` auth — see design decision 3 in
-  `openspec/changes/thymeleaf-frontend/design.md`
+  `openspec/changes/archive/2026-08-12-thymeleaf-frontend/design.md`
 - `rls-bootstrap` — Spring Boot application assembly (composition root wiring every adapter and use
   case together, plus `application.yml`)
 
