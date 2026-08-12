@@ -123,9 +123,13 @@
 
 ## 12. Redis as the authoritative clock
 
-- [ ] 12.1 Write a test confirming evaluation decisions are computed from Redis's own clock and are
+- [x] 12.1 Write a test confirming evaluation decisions are computed from Redis's own clock and are
       unaffected by the calling test JVM's system time (e.g. no `now` argument is ever passed into
-      a script)
+      a script) — implemented as a fast source-inspection test (`*Test`, no Docker/Testcontainers
+      needed) asserting every `.lua` script calls `redis.call('TIME')` and none references a 4th
+      `ARGV` (the adapter only ever passes limit/window_ms/burst_capacity); simulating real clock
+      skew against a live container was judged not worth the added flakiness for what this check
+      needs to prove
 
 ## 13. Verification and wrap-up
 
