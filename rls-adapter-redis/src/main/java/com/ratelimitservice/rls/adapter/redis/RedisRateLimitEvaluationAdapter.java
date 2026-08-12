@@ -22,7 +22,8 @@ public final class RedisRateLimitEvaluationAdapter implements RateLimitEvaluatio
             StrategyType.FIXED_WINDOW, "scripts/fixed_window.lua",
             StrategyType.SLIDING_WINDOW_LOG, "scripts/sliding_window_log.lua",
             StrategyType.SLIDING_WINDOW_COUNTER, "scripts/sliding_window_counter.lua",
-            StrategyType.TOKEN_BUCKET, "scripts/token_bucket.lua"
+            StrategyType.TOKEN_BUCKET, "scripts/token_bucket.lua",
+            StrategyType.LEAKY_BUCKET, "scripts/leaky_bucket.lua"
     );
 
     private final ReactiveRedisTemplate<String, String> redisTemplate;

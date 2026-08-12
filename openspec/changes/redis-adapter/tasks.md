@@ -74,13 +74,16 @@
 
 ## 8. Leaky Bucket (GCRA) strategy script
 
-- [ ] 8.1 Write `leaky_bucket.lua` (`STRING` TAT, GCRA math) using
+- [x] 8.1 Write `leaky_bucket.lua` (`STRING` TAT, GCRA math) using
       `tau = (burstCapacity - 1) * emissionInterval` — the exact formula from the spec 1 domain
-      implementation (spec 1's own tests caught and fixed an off-by-one here; the script must not
+      implementation (spec 1's own tests caught and fixed an off-by-one here; the script does not
       reintroduce it)
-- [ ] 8.2 Wire the script into the adapter
-- [ ] 8.3 Write a Testcontainers test: allow at/after the allowed boundary, deny before it, TAT
-      persisted only on allow
+- [x] 8.2 Wire the script into the adapter
+- [x] 8.3 Write a Testcontainers test: allow at/after the allowed boundary, deny before it, TAT
+      persisted only on allow — the boundary-allow case turned out inherently jitter-safe (extra
+      elapsed time only pushes `now` further past the boundary, never back across it), unlike the
+      Sliding Window Counter case in group 6; the deny-retryAfter assertion still uses a tolerance
+      since real latency elapses between seeding and evaluating
 
 ## 9. Key naming, strategy dispatch, and port wiring
 
