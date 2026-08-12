@@ -12,7 +12,7 @@ specification the Lua scripts must match.
 ## What Changes
 
 - Add `RateLimitEvaluationPort` to `rls-application`: a reactive outbound port
-  (`Mono<RateLimitDecision> evaluate(RateLimitKey key, StrategyType strategyType, Quota quota)`)
+  (`Mono<RateLimitDecision> evaluate(RateLimitKey key, Quota quota)`)
   that the future REST adapter (spec 4) will depend on, decoupled from any specific store.
 - Add the `rls-adapter-redis` Maven module (Spring Data Redis Reactive / Lettuce) implementing
   `RateLimitEvaluationPort`.

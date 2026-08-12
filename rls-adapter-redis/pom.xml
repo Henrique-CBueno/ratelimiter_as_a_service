@@ -35,12 +35,13 @@
             <artifactId>lettuce-core</artifactId>
         </dependency>
 
-        <!-- Test scope: rls-domain provides the pure strategies used as the parity-test oracle -->
+        <!-- Compile scope: RedisKeyBuilder/RedisRateLimitEvaluationAdapter use domain types
+             directly; test code also uses it as the parity-test oracle (rls-domain's pure
+             strategies) -->
         <dependency>
             <groupId>com.ratelimitservice</groupId>
             <artifactId>rls-domain</artifactId>
             <version>${project.version}</version>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>

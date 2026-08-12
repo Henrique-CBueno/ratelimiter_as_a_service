@@ -11,9 +11,10 @@
 
 ## 2. RateLimitEvaluationPort (rls-application)
 
-- [x] 2.1 Define `RateLimitEvaluationPort` interface in `rls-application`
-      (`Mono<RateLimitDecision> evaluate(RateLimitKey key, StrategyType strategyType, Quota quota)`),
-      using only domain types
+- [x] 2.1 Define `RateLimitEvaluationPort` interface in `rls-application` — signature ended up as
+      `Mono<RateLimitDecision> evaluate(RateLimitKey key, Quota quota)`, dropping the separately
+      proposed `StrategyType` parameter since `RateLimitKey` (spec 1) already carries
+      `strategyType()`; passing it twice would have been redundant
 - [x] 2.2 Verify `rls-application` still compiles with zero Redis-specific imports — confirmed via
       `grep -ri redis rls-application/src` (no matches) plus successful compile
 
@@ -28,12 +29,17 @@
 
 ## 4. Fixed Window strategy script
 
-- [ ] 4.1 Write `fixed_window.lua` (`INCR`/`PEXPIRE`, reading time via `redis.call('TIME')`),
-      returning `{allowed, limit, remaining, reset_at_ms, retry_after_ms}`
-- [ ] 4.2 Wire the script into the adapter (load as a resource, invoke via `EVAL`, map the reply to
-      `RateLimitDecision`)
-- [ ] 4.3 Write a Testcontainers test: allow under limit, deny at limit, window rollover — mirroring
-      `FixedWindowStrategyTest` from spec 1
+- [x] 4.1 Write `fixed_window.lua` (`INCR`/`PEXPIRE`, reading time via `redis.call('TIME')`),
+      returning `{allowed, limit, remaining, reset_at_ms, retry_after_ms}` — implemented as a single
+      comma-separated Redis bulk string (`RedisScript<String>`) rather than a native Lua-table
+      multi-bulk reply, to sidestep ambiguity in how Spring Data Redis Reactive deserializes
+      `RedisScript<List>` results; every subsequent script follows the same convention
+- [x] 4.2 Wire the script into the adapter (load as a resource, invoke via `EVAL`, map the reply to
+      `RateLimitDecision`) — `RedisRateLimitEvaluationAdapter` with an `EnumMap<StrategyType, ...>`
+      script registry, extended by each subsequent strategy group; also introduced `RedisKeyBuilder`
+      here (pulled forward from 9.1, same rationale as `StrategyType` in spec 1)
+- [x] 4.3 Write a Testcontainers test: allow under limit, deny at limit, window rollover — mirroring
+      `FixedWindowStrategyTest` from spec 1 — includes a real-time rollover test (waits >1s)
 
 ## 5. Sliding Window Log strategy script
 
