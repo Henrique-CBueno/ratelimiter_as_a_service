@@ -49,6 +49,30 @@ public final class Tenant {
         }
     }
 
+    /**
+     * Rebuilds a {@code Tenant} exactly as previously persisted (existing id, status, and token
+     * history) — for use by repository adapters only. Unlike {@link #register}, this does not
+     * generate a new id or default to {@code ACTIVE}/an empty token list.
+     */
+    public static Tenant reconstitute(TenantId id, String name, String email, String passwordHash,
+                                       TenantStatus status, FallbackPolicy defaultFallbackPolicy,
+                                       List<ApiTokenData> tokenData) {
+        Objects.requireNonNull(id, "id must not be null");
+        Objects.requireNonNull(name, "name must not be null");
+        Objects.requireNonNull(email, "email must not be null");
+        Objects.requireNonNull(passwordHash, "passwordHash must not be null");
+        Objects.requireNonNull(status, "status must not be null");
+        Objects.requireNonNull(defaultFallbackPolicy, "defaultFallbackPolicy must not be null");
+        Objects.requireNonNull(tokenData, "tokenData must not be null");
+
+        Tenant tenant = new Tenant(id, name, email, passwordHash, status, defaultFallbackPolicy);
+        for (ApiTokenData data : tokenData) {
+            tenant.apiTokens.add(ApiToken.restore(data.id(), data.tokenHash(), data.tokenPrefix(),
+                    data.createdAt(), data.revokedAt()));
+        }
+        return tenant;
+    }
+
     public void suspend() {
         if (status != TenantStatus.ACTIVE) {
             throw new IllegalStateException("Only an active tenant can be suspended");

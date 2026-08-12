@@ -49,6 +49,22 @@ public final class RateLimitResource {
         }
     }
 
+    /**
+     * Rebuilds a {@code RateLimitResource} exactly as previously persisted (existing id and
+     * enabled flag) — for use by repository adapters only. Unlike {@link #create}, this does not
+     * generate a new id or default to {@code enabled = true}.
+     */
+    public static RateLimitResource reconstitute(ResourceId id, TenantId tenantId, String resourceKey,
+                                                  StrategyType strategyType, Quota quota,
+                                                  FallbackPolicy fallbackPolicy, boolean enabled) {
+        Objects.requireNonNull(id, "id must not be null");
+        Objects.requireNonNull(tenantId, "tenantId must not be null");
+        requireNonBlank(resourceKey, "resourceKey");
+        Objects.requireNonNull(strategyType, "strategyType must not be null");
+        Objects.requireNonNull(quota, "quota must not be null");
+        return new RateLimitResource(id, tenantId, resourceKey, strategyType, quota, fallbackPolicy, enabled);
+    }
+
     public FallbackPolicy resolveFallbackPolicy(Tenant tenant) {
         Objects.requireNonNull(tenant, "tenant must not be null");
         return fallbackPolicy != null ? fallbackPolicy : tenant.defaultFallbackPolicy();

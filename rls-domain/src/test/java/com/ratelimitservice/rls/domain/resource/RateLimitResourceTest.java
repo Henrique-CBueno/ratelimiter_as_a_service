@@ -124,4 +124,36 @@ class RateLimitResourceTest {
         assertThat(resource.strategyType()).isEqualTo(StrategyType.FIXED_WINDOW);
         assertThat(resource.quota()).isEqualTo(QUOTA);
     }
+
+    // Reconstitution (spec: postgres-adapter) — reproduces an existing resource's full state,
+    // bypassing create()'s new-aggregate invariants (fresh id, always enabled).
+
+    @Test
+    void reconstituteReproducesFullState() {
+        var resourceId = com.ratelimitservice.rls.domain.shared.ResourceId.generate();
+
+        RateLimitResource resource = RateLimitResource.reconstitute(
+                resourceId, TENANT_ID, "/login", StrategyType.TOKEN_BUCKET, QUOTA,
+                FallbackPolicy.FAIL_CLOSED, false);
+
+        assertThat(resource.id()).isEqualTo(resourceId);
+        assertThat(resource.tenantId()).isEqualTo(TENANT_ID);
+        assertThat(resource.resourceKey()).isEqualTo("/login");
+        assertThat(resource.strategyType()).isEqualTo(StrategyType.TOKEN_BUCKET);
+        assertThat(resource.quota()).isEqualTo(QUOTA);
+        assertThat(resource.fallbackPolicy()).isEqualTo(FallbackPolicy.FAIL_CLOSED);
+        assertThat(resource.enabled()).isFalse();
+    }
+
+    @Test
+    void reconstituteWithNullFallbackPolicyStillInheritsFromTenant() {
+        var resourceId = com.ratelimitservice.rls.domain.shared.ResourceId.generate();
+        Tenant tenant = Tenant.register("Acme Inc", "ops@acme.test", "hashed-secret", FallbackPolicy.FAIL_OPEN);
+
+        RateLimitResource resource = RateLimitResource.reconstitute(
+                resourceId, TENANT_ID, "/login", StrategyType.FIXED_WINDOW, QUOTA, null, true);
+
+        assertThat(resource.fallbackPolicy()).isNull();
+        assertThat(resource.resolveFallbackPolicy(tenant)).isEqualTo(FallbackPolicy.FAIL_OPEN);
+    }
 }

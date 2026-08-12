@@ -24,13 +24,17 @@
 
 ## 3. Domain reconstruction support (rls-domain)
 
-- [ ] 3.1 Write failing tests for `Tenant.reconstitute(...)` reproducing an existing tenant's full
+- [x] 3.1 Write failing tests for `Tenant.reconstitute(...)` reproducing an existing tenant's full
       state (id, name, email, password hash, status, default fallback policy, full token list
       including revoked ones) without going through `register()`'s new-aggregate invariants
-- [ ] 3.2 Implement `Tenant.reconstitute(...)`
-- [ ] 3.3 Write failing tests for `RateLimitResource.reconstitute(...)` reproducing an existing
+- [x] 3.2 Implement `Tenant.reconstitute(...)` — added a small `ApiTokenData` record (id, hash,
+      prefix, createdAt, revokedAt) as the adapter-facing shape for token history, and a
+      package-private `ApiToken.restore(...)` (reachable only from within `domain.tenant`, i.e.
+      from `Tenant.reconstitute`) since `ApiToken` itself doesn't need adapter-visible
+      reconstruction — only the aggregate root does
+- [x] 3.3 Write failing tests for `RateLimitResource.reconstitute(...)` reproducing an existing
       resource's full state without going through `create()`'s new-aggregate invariants
-- [ ] 3.4 Implement `RateLimitResource.reconstitute(...)`
+- [x] 3.4 Implement `RateLimitResource.reconstitute(...)`
 
 ## 4. Secret hashing (SecretHasherPort)
 
