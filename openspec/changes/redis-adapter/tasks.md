@@ -19,9 +19,11 @@
 
 ## 3. Test infrastructure
 
-- [ ] 3.1 Add a Testcontainers Redis test support base (container lifecycle, reactive connection
-      factory) in `rls-adapter-redis` test scope
-- [ ] 3.2 Write a smoke test confirming the Testcontainers Redis connection and `EVAL` work end to
+- [x] 3.1 Add a Testcontainers Redis test support base (container lifecycle, reactive connection
+      factory) in `rls-adapter-redis` test scope — `AbstractRedisIT` uses the singleton-container
+      pattern (one `redis:7-alpine` container shared across the module's test classes, started in
+      a static initializer, flushed after each test) since this module has many IT classes
+- [x] 3.2 Write a smoke test confirming the Testcontainers Redis connection and `EVAL` work end to
       end (e.g. a trivial script)
 
 ## 4. Fixed Window strategy script
