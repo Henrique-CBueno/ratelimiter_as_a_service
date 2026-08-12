@@ -87,11 +87,22 @@
 
 ## 6. REST: tenant onboarding endpoints
 
-- [ ] 6.1 Define request/response DTOs for tenant registration and token rotation
-- [ ] 6.2 Implement `TenantController`: `POST /api/v1/tenants` (public), `POST
-      /api/v1/tokens/rotate` (authenticated)
-- [ ] 6.3 Write `WebTestClient` slice tests (use cases mocked): successful registration (`201`),
-      duplicate email (`409`), successful rotation (`200`), unauthenticated rotation (`401`)
+- [x] 6.1 Define request/response DTOs for tenant registration and token rotation
+- [x] 6.2 Implement `TenantController`: `POST /api/v1/tenants` (public), `POST
+      /api/v1/tokens/rotate` (authenticated) — also added the shared `AuthenticatedTenant`
+      exchange-attribute constant (group 7 will populate it) and a minimal `RestExceptionHandler`
+      mapping `DuplicateEmailException`/`DuplicateResourceKeyException` → 409 (pulled forward from
+      group 10, extended incrementally as later groups need more mappings)
+- [x] 6.3 Write `WebTestClient` slice tests (use cases mocked): successful registration (`201`),
+      duplicate email (`409`), successful rotation (`200`). The unauthenticated-rotation-`401`
+      case moved to group 7's own tests: rejecting unauthenticated requests is entirely the auth
+      `WebFilter`'s job, which this controller-only slice doesn't load, so there's nothing for the
+      controller itself to assert about it. Hit and fixed a real `@WebFluxTest` pitfall along the
+      way: a bare `@SpringBootConfiguration` test stand-in doesn't imply `@ComponentScan`, so the
+      slice's controller filter had nothing to scan and silently registered zero controllers
+      (all requests 404'd, not just the auth-dependent one) — fixed by using
+      `@SpringBootApplication` for the test-scope stand-in instead; also switched the deprecated
+      `@MockBean` to `@MockitoBean`
 
 ## 7. REST: authentication
 
