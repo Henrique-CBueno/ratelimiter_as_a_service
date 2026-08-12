@@ -174,15 +174,27 @@
 
 ## 11. rls-bootstrap: composition root
 
-- [ ] 11.1 Create the `@SpringBootApplication` main class and `application.yml` (Redis/PostgreSQL
-      connection properties, server port)
-- [ ] 11.2 Wire every bean by hand in `@Configuration` classes: `ReactiveRedisTemplate`
+- [x] 11.1 Create the `@SpringBootApplication` main class and `application.yml` (Redis/PostgreSQL
+      connection properties, server port) — used `@SpringBootApplication(scanBasePackages =
+      "com.ratelimitservice.rls")` since controllers/filters/advice live outside this module's own
+      package tree
+- [x] 11.2 Wire every bean by hand in `@Configuration` classes: `ReactiveRedisTemplate`
       (spec 2), R2DBC `DatabaseClient`/`ConnectionFactory` (spec 3), the shared `CircuitBreaker`
       + `ResilientRateLimitEvaluationAdapter` (this spec), `TenantRepositoryAdapter`,
       `ResourceRepositoryAdapter`, `BCryptSecretHasherAdapter`, all use cases from groups 2–4, the
-      auth filter, and the three controllers
-- [ ] 11.3 Write a `@SpringBootTest` smoke test (Testcontainers Redis + PostgreSQL) confirming the
-      application context loads successfully with every bean wired
+      auth filter, and the three controllers — controllers/`RestExceptionHandler` are picked up by
+      component scanning (they're `@RestController`/`@RestControllerAdvice` stereotypes already);
+      everything else (use cases, the auth filter, all adapters) is explicitly `@Bean`-wired, per
+      design decision 5 extended consistently to the whole module. Deliberately did NOT annotate
+      `ApiTokenAuthenticationWebFilter` with `@Component`: tried it, and it broke every
+      `rls-adapter-rest` `@WebFluxTest` slice, because `@WebFluxTest`'s type filter includes
+      `WebFilter` beans, so the real filter (needing `AuthenticateTenantUseCase`) got scanned into
+      slices that don't provide one — reverted, wired it explicitly here instead. Flyway migration
+      is forced to run before the R2DBC `databaseClient` bean via `@DependsOn("flyway")`, since
+      beans with no direct dependency have no ordering guarantee otherwise
+- [x] 11.3 Write a `@SpringBootTest` smoke test (Testcontainers Redis + PostgreSQL) confirming the
+      application context loads successfully with every bean wired — passed on the first run:
+      Flyway migrated the schema, Netty started, every bean resolved
 
 ## 12. End-to-end tests
 

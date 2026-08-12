@@ -1,0 +1,18 @@
+server:
+  port: ${PORT:8080}
+
+rls:
+  redis:
+    host: ${REDIS_HOST:localhost}
+    port: ${REDIS_PORT:6379}
+  postgres:
+    host: ${POSTGRES_HOST:localhost}
+    port: ${POSTGRES_PORT:5432}
+    database: ${POSTGRES_DATABASE:rls}
+    username: ${POSTGRES_USERNAME:rls}
+    password: ${POSTGRES_PASSWORD:rls}
+  resilience:
+    failure-rate-threshold: ${RLS_CB_FAILURE_RATE_THRESHOLD:50}
+    sliding-window-size: ${RLS_CB_SLIDING_WINDOW_SIZE:20}
+    minimum-number-of-calls: ${RLS_CB_MINIMUM_CALLS:10}
+    wait-duration-in-open-state-seconds: ${RLS_CB_WAIT_SECONDS:30}
