@@ -198,28 +198,48 @@
 
 ## 12. End-to-end tests
 
-- [ ] 12.1 Write a full happy-path e2e test against the running `@SpringBootTest` context
+- [x] 12.1 Write a full happy-path e2e test against the running `@SpringBootTest` context
       (`WebTestClient`, Testcontainers Redis + PostgreSQL): register a tenant, create a resource,
       call check repeatedly until the configured limit is exceeded, confirm `429` and headers on
-      the request that exceeds it
-- [ ] 12.2 Write a circuit-open fallback e2e test: force the shared `CircuitBreaker` bean into the
+      the request that exceeds it — extracted the shared Testcontainers setup into an
+      `AbstractE2ETest` base class first, so `HappyPathE2EIT`, `CircuitOpenFallbackE2EIT`, and the
+      existing smoke test all reuse one context/container pair
+- [x] 12.2 Write a circuit-open fallback e2e test: force the shared `CircuitBreaker` bean into the
       open state directly (`transitionToOpenState()`, avoiding flaky container-pausing tricks),
       call check for a resource with a known fallback policy, confirm the response matches that
-      policy with `degraded = true`, then transition the circuit back to closed
+      policy with `degraded = true`, then transition the circuit back to closed — `degraded` isn't
+      part of the REST response contract, so verified the fallback behaviorally instead: a
+      `FAIL_CLOSED` resource well within its limit returns `429` only while the circuit is forced
+      open, and reverts to `200` once the circuit is transitioned back to closed
+
+**Pitfall hit:** the abstract base class originally used `@Testcontainers`/`@Container` on the
+static Redis/Postgres fields. That extension ties container start/stop to each concrete test
+class's own lifecycle, so with three subclasses sharing one abstract base it stopped the containers
+after the first class's tests and restarted them (on new random ports) for the next — while Spring
+reused the cached `ApplicationContext` (identical config across all three classes) with its R2DBC
+pool still bound to the now-dead port, causing a `DataAccessResourceFailureException` on the second
+class's first database write. Fixed by switching to the documented Testcontainers "singleton
+container" pattern: start both containers once in a static initializer with no `@Testcontainers`
+annotation, so they're never stopped between classes (Ryuk reaps them at JVM exit).
 
 ## 13. OpenAPI
 
-- [ ] 13.1 Verify `/v3/api-docs` and the Swagger UI are reachable in the `@SpringBootTest` smoke
-      test, confirming `springdoc-openapi` picked up the REST controllers
+- [x] 13.1 Verify `/v3/api-docs` and the Swagger UI are reachable in the `@SpringBootTest` smoke
+      test, confirming `springdoc-openapi` picked up the REST controllers — added
+      `openApiDocsAreReachable` (asserts the three controllers' paths are present in the generated
+      spec) and `swaggerUiIsReachable` to `RlsApplicationSmokeIT`
 
 ## 14. Verification and wrap-up
 
-- [ ] 14.1 Run `mvn verify` across every module; confirm every scenario in
+- [x] 14.1 Run `mvn verify` across every module; confirm every scenario in
       `specs/tenant-onboarding-api/spec.md`, `specs/resource-management-api/spec.md`,
       `specs/rate-limit-check-endpoint/spec.md`, and `specs/resilient-evaluation-fallback/spec.md`
-      is covered by a passing test
-- [ ] 14.2 Update `README.md`: new modules, how to actually run `rls-bootstrap` locally (requires
+      is covered by a passing test — full reactor `mvn verify` is green; scenarios are covered by
+      `TenantControllerTest`, `ResourceControllerTest`, `RateLimitCheckControllerTest`,
+      `ApiTokenAuthenticationWebFilterTest`, `RestExceptionHandlerTest`,
+      `ResilientRateLimitEvaluationAdapterTest`, and the `rls-bootstrap` e2e tests
+- [x] 14.2 Update `README.md`: new modules, how to actually run `rls-bootstrap` locally (requires
       Redis + PostgreSQL, not just Testcontainers-for-tests), and a note that Docker Compose for
       one-command local startup is spec 6's scope
-- [ ] 14.3 Commit work on `feature/rest-api` following git-flow commit conventions (no AI
+- [x] 14.3 Commit work on `feature/rest-api` following git-flow commit conventions (no AI
       co-authorship line)
