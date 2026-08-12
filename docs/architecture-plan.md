@@ -190,7 +190,7 @@ o dashboard Thymeleaf (login separado do token de API).
    → **status: implementada e arquivada** (`openspec/changes/archive/2026-08-12-redis-adapter/`)
 3. **Adapter Postgres/R2DBC** — módulo `rls-adapter-persistence`; migrations Flyway; implementação
    de `TenantRepositoryPort`/`ResourceRepositoryPort`; hashing de senha/token.
-   → **status: implementada** (`openspec/changes/postgres-adapter/`, pendente de archive)
+   → **status: implementada e arquivada** (`openspec/changes/archive/2026-08-12-postgres-adapter/`)
 4. **API REST reativa + Circuit Breaker** — módulo `rls-adapter-rest` (controllers, auth por API
    key, DTOs, ProblemDetail, OpenAPI); módulo `rls-adapter-resilience`; primeira materialização real
    de `rls-bootstrap`; testes e2e com Testcontainers.
