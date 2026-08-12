@@ -13,13 +13,13 @@
 
 ## 3. Shared value objects (rls-domain)
 
-- [ ] 3.1 Implement `TenantId` and `ResourceId` (UUID-backed identifier value objects)
-- [ ] 3.2 Implement `ClientIp` with IPv4/IPv6 validation and normalization, with unit tests
-- [ ] 3.3 Implement `FallbackPolicy` enum (`FAIL_OPEN`, `FAIL_CLOSED`)
-- [ ] 3.4 Implement `Quota` (limit, window `Duration`, optional `burstCapacity`) with validation (`limit > 0`, `window > 0`), with unit tests
-- [ ] 3.5 Implement `RateLimitKey` (tenantId + resourceId + clientIp + strategyCode)
-- [ ] 3.6 Implement `RateLimitDecision` (allowed, limit, remaining, resetAt, retryAfter nullable, degraded flag)
-- [ ] 3.7 Implement `RateLimitState` hierarchy: `FixedWindowState`, `SlidingLogState`, `SlidingCounterState`, `TokenBucketState`, `LeakyBucketState`
+- [x] 3.1 Implement `TenantId` and `ResourceId` (UUID-backed identifier value objects)
+- [x] 3.2 Implement `ClientIp` with IPv4/IPv6 validation and normalization, with unit tests
+- [x] 3.3 Implement `FallbackPolicy` enum (`FAIL_OPEN`, `FAIL_CLOSED`)
+- [x] 3.4 Implement `Quota` (limit, window `Duration`, optional `burstCapacity`) with validation (`limit > 0`, `window > 0`), with unit tests
+- [x] 3.5 Implement `RateLimitKey` (tenantId + resourceId + clientIp + strategyCode) — also introduces the `StrategyType` enum (originally scheduled at 6.2) since `RateLimitKey` needs it; 6.2 will just confirm it
+- [x] 3.6 Implement `RateLimitDecision` (allowed, limit, remaining, resetAt, retryAfter nullable, degraded flag), with unit tests covering the denied-requires-retryAfter invariant
+- [x] 3.7 Implement `RateLimitState` hierarchy: `FixedWindowState`, `SlidingLogState`, `SlidingCounterState`, `TokenBucketState`, `LeakyBucketState`
 
 ## 4. Tenant aggregate (rls-domain) — capability: tenant-management
 
