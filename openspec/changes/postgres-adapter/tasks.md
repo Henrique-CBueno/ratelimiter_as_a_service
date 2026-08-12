@@ -1,11 +1,14 @@
 ## 1. Setup
 
-- [ ] 1.1 Create `feature/postgres-adapter` branch from `develop`
-- [ ] 1.2 Add `rls-adapter-persistence` module to the parent `pom.xml`; add the R2DBC PostgreSQL
+- [x] 1.1 Create `feature/postgres-adapter` branch from `develop`
+- [x] 1.2 Add `rls-adapter-persistence` module to the parent `pom.xml`; add the R2DBC PostgreSQL
       driver (main), Flyway core + the PostgreSQL JDBC driver (main, migration-time only),
       `spring-security-crypto` (main), depending on `rls-application` and `rls-domain`; add the
-      Testcontainers PostgreSQL module (test scope)
-- [ ] 1.3 Verify `mvn -pl rls-adapter-persistence -am compile` succeeds with the empty module
+      Testcontainers PostgreSQL module (test scope) — the R2DBC PostgreSQL driver now lives under
+      `org.postgresql:r2dbc-postgresql` (moved from the old `io.r2dbc:r2dbc-postgresql`
+      coordinates); also added `flyway-database-postgresql`, split out of `flyway-core` in
+      modern Flyway versions
+- [x] 1.3 Verify `mvn -pl rls-adapter-persistence -am compile` succeeds with the empty module
       skeleton
 
 ## 2. Database schema (Flyway)
