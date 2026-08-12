@@ -106,12 +106,18 @@
 
 ## 7. REST: authentication
 
-- [ ] 7.1 Implement `ApiTokenAuthenticationWebFilter`: extracts `Authorization: Bearer`, resolves
+- [x] 7.1 Implement `ApiTokenAuthenticationWebFilter`: extracts `Authorization: Bearer`, resolves
       the tenant via `AuthenticateTenantUseCase`, attaches the resolved `Tenant` to the exchange
       for downstream handlers, or short-circuits with `401`; allowlists `POST /api/v1/tenants`
-- [ ] 7.2 Write slice tests: missing/invalid token rejected with `401` on a protected endpoint;
+      (also allowlisted `/v3/api-docs`, `/swagger-ui`, `/webjars` prefixes up front, anticipating
+      group 13's OpenAPI docs needing to stay publicly reachable)
+- [x] 7.2 Write slice tests: missing/invalid token rejected with `401` on a protected endpoint;
       valid token passes through and the downstream handler can read the resolved tenant;
-      registration remains reachable with no token at all
+      registration remains reachable with no token at all — tested the filter directly (Mockito
+      fake use case + `MockServerWebExchange`/`MockServerHttpRequest`), not via `@WebFluxTest`,
+      since the filter has no controller of its own to slice-test through; also added
+      `reactor-test` to `rls-adapter-rest` (missing until now — `spring-boot-starter-test` doesn't
+      pull it in automatically even for WebFlux projects)
 
 ## 8. REST: resource management endpoints
 
