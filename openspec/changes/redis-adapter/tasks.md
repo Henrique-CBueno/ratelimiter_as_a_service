@@ -87,11 +87,16 @@
 
 ## 9. Key naming, strategy dispatch, and port wiring
 
-- [ ] 9.1 Implement the Redis key builder following `rl:{tenantId}:{resourceId}:{clientIp}:{strategyCode}`
-- [ ] 9.2 Implement the strategy-to-script dispatch in the adapter's `RateLimitEvaluationPort`
-      implementation, selecting the right script by `StrategyType`
-- [ ] 9.3 Write a test confirming that evaluating the same tenant/resource/IP under a different
-      strategy type does not raise a Redis type error and starts from fresh state
+- [x] 9.1 Implement the Redis key builder following `rl:{tenantId}:{resourceId}:{clientIp}:{strategyCode}`
+      — already done at 4.2 (`RedisKeyBuilder`, pulled forward); confirmed present and used by all
+      five scripts
+- [x] 9.2 Implement the strategy-to-script dispatch in the adapter's `RateLimitEvaluationPort`
+      implementation, selecting the right script by `StrategyType` — already built incrementally
+      across groups 4-8 (`RedisRateLimitEvaluationAdapter`'s `SCRIPT_RESOURCES`/`scriptsByType`
+      `EnumMap`); confirmed all five strategies are registered
+- [x] 9.3 Write a test confirming that evaluating the same tenant/resource/IP under a different
+      strategy type does not raise a Redis type error and starts from fresh state — covers
+      STRING→ZSET, ZSET→HASH, and STRING→STRING (different strategy) transitions
 
 ## 10. Concurrency proof (atomicity)
 
