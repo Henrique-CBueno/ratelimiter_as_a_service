@@ -13,12 +13,14 @@
 
 ## 2. Database schema (Flyway)
 
-- [ ] 2.1 Write `V1__init.sql` creating `tenants`, `api_tokens`, and `rate_limit_resources`,
+- [x] 2.1 Write `V1__init.sql` creating `tenants`, `api_tokens`, and `rate_limit_resources`,
       matching the schema in `docs/architecture-plan.md`, including `UNIQUE(email)` on `tenants`,
       `UNIQUE(token_hash)` on `api_tokens`, and `UNIQUE(tenant_id, resource_key)` on
       `rate_limit_resources`
-- [ ] 2.2 Write a Testcontainers test that runs the migration against a real PostgreSQL instance
-      and asserts it succeeds (tables exist with the expected constraints)
+- [x] 2.2 Write a Testcontainers test that runs the migration against a real PostgreSQL instance
+      and asserts it succeeds (tables exist with the expected constraints) — also introduced
+      `AbstractPostgresIT` (singleton-container pattern, same as `AbstractRedisIT` in
+      rls-adapter-redis), used by every subsequent PostgreSQL integration test in this module
 
 ## 3. Domain reconstruction support (rls-domain)
 
