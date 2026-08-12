@@ -37,16 +37,16 @@
 
 ## 3. Application use cases: resource
 
-- [ ] 3.1 Write failing tests and implement `CreateResourceUseCase` (persists a new resource under
+- [x] 3.1 Write failing tests and implement `CreateResourceUseCase` (persists a new resource under
       the given tenant; a duplicate-key failure from the port propagates unchanged)
-- [ ] 3.2 Write failing tests and implement `ListResourcesUseCase` (returns only the given
+- [x] 3.2 Write failing tests and implement `ListResourcesUseCase` (returns only the given
       tenant's resources)
-- [ ] 3.3 Write failing tests and implement `GetResourceUseCase` (returns the resource only when
+- [x] 3.3 Write failing tests and implement `GetResourceUseCase` (returns the resource only when
       it belongs to the given tenant; empty otherwise, including when it belongs to a different
       tenant)
-- [ ] 3.4 Write failing tests and implement `UpdateResourceUseCase` (reconfigures strategy/quota
+- [x] 3.4 Write failing tests and implement `UpdateResourceUseCase` (reconfigures strategy/quota
       only when the resource belongs to the given tenant; empty otherwise)
-- [ ] 3.5 Write failing tests and implement `DeleteResourceUseCase` (disables the resource only
+- [x] 3.5 Write failing tests and implement `DeleteResourceUseCase` (disables the resource only
       when it belongs to the given tenant; empty/false otherwise)
 
 ## 4. Application use case: check rate limit
