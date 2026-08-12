@@ -67,9 +67,9 @@
 
 ## 7. Token Bucket strategy script
 
-- [ ] 7.1 Write `token_bucket.lua` (`HASH` with `tokens`/`last_refill`, proportional refill)
-- [ ] 7.2 Wire the script into the adapter
-- [ ] 7.3 Write a Testcontainers test: allow with tokens available, deny when empty, refill
+- [x] 7.1 Write `token_bucket.lua` (`HASH` with `tokens`/`last_refill_ms`, proportional refill)
+- [x] 7.2 Wire the script into the adapter
+- [x] 7.3 Write a Testcontainers test: allow with tokens available, deny when empty, refill
       proportional to elapsed time, refill never exceeds capacity
 
 ## 8. Leaky Bucket (GCRA) strategy script
