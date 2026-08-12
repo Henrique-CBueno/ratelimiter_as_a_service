@@ -184,9 +184,10 @@ o dashboard Thymeleaf (login separado do token de API).
 1. **Setup do projeto + domínio core** — `git init` modelo git-flow (`main`/`develop`); parent POM +
    `rls-domain` + `rls-application` (esqueleto de portas); aggregates `Tenant`/`RateLimitResource` +
    VOs; `RateLimitStrategy` + 5 implementações puras com suíte TDD completa; `.gitignore`, README.
-   → **status: proposta criada em `openspec/changes/setup-domain-core/`**
+   → **status: implementada e arquivada** (`openspec/changes/archive/2026-08-12-setup-domain-core/`)
 2. **Portas + adapter Redis** — `RateLimitEvaluationPort`; módulo `rls-adapter-redis` (Lettuce/Spring
    Data Redis Reactive), 5 scripts Lua, registry strategy→script; testes de concorrência e paridade.
+   → **status: implementada e arquivada** (`openspec/changes/archive/2026-08-12-redis-adapter/`)
 3. **Adapter Postgres/R2DBC** — módulo `rls-adapter-persistence`; migrations Flyway; implementação
    de `TenantRepositoryPort`/`ResourceRepositoryPort`; hashing de senha/token.
 4. **API REST reativa + Circuit Breaker** — módulo `rls-adapter-rest` (controllers, auth por API

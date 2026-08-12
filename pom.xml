@@ -30,6 +30,7 @@
     <modules>
         <module>rls-domain</module>
         <module>rls-application</module>
+        <module>rls-adapter-redis</module>
     </modules>
 
     <dependencyManagement>
