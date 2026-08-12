@@ -81,11 +81,25 @@ all, letting a caller enumerate other tenants' resource ids by probing status co
 nothing.
 
 **7. Token format: `rls_live_<32 random URL-safe characters>`, first 12 characters stored as the
-display prefix, full token hashed via `SecretHasherPort` before storage.**
-Only the hash is ever persisted (spec 3); the raw token is returned to the caller exactly once, at
-issuance/rotation time, and never again. The `rls_live_` prefix follows the common "identifiable
-token prefix" convention (recognizable in logs/secret scanners) without needing a database lookup to
-tell tokens apart from other secrets.
+display prefix, full token *fingerprinted* (not `SecretHasherPort`-hashed) before storage.**
+Only the fingerprint is ever persisted (spec 3); the raw token is returned to the caller exactly
+once, at issuance/rotation time, and never again. The `rls_live_` prefix follows the common
+"identifiable token prefix" convention (recognizable in logs/secret scanners) without needing a
+database lookup to tell tokens apart from other secrets.
+**Correction discovered during this spec's implementation** (supersedes spec 3's proposal wording
+that one `SecretHasherPort` would serve both passwords and tokens): `SecretHasherPort` is
+BCrypt-backed and salted, so `hash(x)` returns a *different* value on every call for the same
+input — correct for password verification (always "look up the tenant by email, then check
+BCrypt.matches against that tenant's stored hash"), but incompatible with
+`TenantRepositoryPort.findByActiveTokenHash`, which must locate the tenant *by* the stored value
+without knowing who it belongs to first. A random 24-byte token already has enough entropy that it
+does not need a salted, deliberately-slow hash to resist brute force — a password does, because
+humans choose low-entropy passwords. `ApiTokenGenerator` (new, `rls-application`) therefore adds a
+`fingerprint(rawToken)` method — a plain deterministic SHA-256 digest, needing no port/adapter
+since it has no swappable implementation concern — used everywhere a token's stored `tokenHash` is
+computed or looked up. `SecretHasherPort`/BCrypt remains exclusively for tenant passwords. See the
+`## MODIFIED Requirements` in `specs/tenant-persistence/spec.md` (this change) for the corrected
+capability requirement.
 
 **8. Errors map to RFC 7807 `ProblemDetail` via WebFlux's built-in `ProblemDetail`/
 `ResponseStatusException` support**, not a hand-rolled error envelope. Domain/application exceptions
