@@ -19,7 +19,8 @@ import java.util.Map;
 public final class RedisRateLimitEvaluationAdapter implements RateLimitEvaluationPort {
 
     private static final Map<StrategyType, String> SCRIPT_RESOURCES = Map.of(
-            StrategyType.FIXED_WINDOW, "scripts/fixed_window.lua"
+            StrategyType.FIXED_WINDOW, "scripts/fixed_window.lua",
+            StrategyType.SLIDING_WINDOW_LOG, "scripts/sliding_window_log.lua"
     );
 
     private final ReactiveRedisTemplate<String, String> redisTemplate;

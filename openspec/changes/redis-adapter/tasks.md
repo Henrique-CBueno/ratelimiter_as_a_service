@@ -43,9 +43,12 @@
 
 ## 5. Sliding Window Log strategy script
 
-- [ ] 5.1 Write `sliding_window_log.lua` (`ZSET`: `ZREMRANGEBYSCORE` + `ZCARD` + conditional `ZADD`)
-- [ ] 5.2 Wire the script into the adapter
-- [ ] 5.3 Write a Testcontainers test: allow with capacity, deny when full, expired entries purged
+- [x] 5.1 Write `sliding_window_log.lua` (`ZSET`: `ZREMRANGEBYSCORE` + `ZCARD` + conditional `ZADD`)
+      — added a companion `<key>:seq` counter to guarantee unique ZSET members under
+      same-millisecond concurrency (plain millisecond timestamps could otherwise collide and
+      collapse into one entry)
+- [x] 5.2 Wire the script into the adapter
+- [x] 5.3 Write a Testcontainers test: allow with capacity, deny when full, expired entries purged
 
 ## 6. Sliding Window Counter strategy script
 
