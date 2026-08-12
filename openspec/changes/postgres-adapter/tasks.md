@@ -92,12 +92,12 @@
 
 ## 9. Resource persistence integration tests (Testcontainers PostgreSQL)
 
-- [ ] 9.1 Round-trip test: create a resource, save, load by id, assert identical observable state
-- [ ] 9.2 `findByTenantAndKey`: found for an existing resource, empty for a non-existent one
-- [ ] 9.3 `findAllByTenant` returns only that tenant's resources, not other tenants'
-- [ ] 9.4 Duplicate `resourceKey` for the same tenant is rejected with `DuplicateResourceKeyException`;
+- [x] 9.1 Round-trip test: create a resource, save, load by id, assert identical observable state
+- [x] 9.2 `findByTenantAndKey`: found for an existing resource, empty for a non-existent one
+- [x] 9.3 `findAllByTenant` returns only that tenant's resources, not other tenants'
+- [x] 9.4 Duplicate `resourceKey` for the same tenant is rejected with `DuplicateResourceKeyException`;
       the same key across two different tenants is allowed
-- [ ] 9.5 Reconfiguring the strategy/quota and disabling a resource are both persisted across a
+- [x] 9.5 Reconfiguring the strategy/quota and disabling a resource are both persisted across a
       save-then-reload cycle
 
 ## 10. Verification and wrap-up
