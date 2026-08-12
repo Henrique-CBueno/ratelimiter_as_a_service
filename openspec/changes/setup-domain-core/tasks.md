@@ -46,23 +46,23 @@
 
 ## 6. Rate limit strategies (rls-domain) — capability: rate-limit-strategy-evaluation
 
-- [ ] 6.1 Define `RateLimitStrategy` interface (`evaluate(state, quota, now) -> RateLimitDecision` + new state, pure/synchronous)
-- [ ] 6.2 Define `StrategyType` enum (`FIXED_WINDOW`, `SLIDING_WINDOW_LOG`, `SLIDING_WINDOW_COUNTER`, `TOKEN_BUCKET`, `LEAKY_BUCKET`)
-- [ ] 6.3 Write failing tests for `FixedWindowStrategy` (allow under limit, deny at limit, window rollover)
-- [ ] 6.4 Implement `FixedWindowStrategy`
-- [ ] 6.5 Write failing tests for `SlidingWindowLogStrategy` (allow, deny, expired timestamp purge)
-- [ ] 6.6 Implement `SlidingWindowLogStrategy`
-- [ ] 6.7 Write failing tests for `SlidingWindowCounterStrategy` (allow under weighted estimate, deny at estimate)
-- [ ] 6.8 Implement `SlidingWindowCounterStrategy`
-- [ ] 6.9 Write failing tests for `TokenBucketStrategy` (allow with tokens available, deny when empty, refill proportional to elapsed time)
-- [ ] 6.10 Implement `TokenBucketStrategy`
-- [ ] 6.11 Write failing tests for `LeakyBucketStrategy` (GCRA allow/deny at boundary, TAT persistence only on allow)
-- [ ] 6.12 Implement `LeakyBucketStrategy`
-- [ ] 6.13 Write failing tests asserting every strategy's denied decision includes a non-null `retryAfter`
-- [ ] 6.14 Add property-based or table-driven edge-case tests (remaining never negative, allowed never exceeds limit within a window) for all five strategies
-- [ ] 6.15 Write failing tests for `StrategyRegistry` (resolves known types, rejects unknown types)
-- [ ] 6.16 Implement `StrategyRegistry`
-- [ ] 6.17 Confirm all `rate-limit-strategy-evaluation` scenarios from the spec are covered by passing tests
+- [x] 6.1 Define `RateLimitStrategy` interface (`evaluate(state, quota, now) -> RateLimitDecision` + new state, pure/synchronous)
+- [x] 6.2 Define `StrategyType` enum (`FIXED_WINDOW`, `SLIDING_WINDOW_LOG`, `SLIDING_WINDOW_COUNTER`, `TOKEN_BUCKET`, `LEAKY_BUCKET`) — already created at 3.5, confirmed present
+- [x] 6.3 Write failing tests for `FixedWindowStrategy` (allow under limit, deny at limit, window rollover)
+- [x] 6.4 Implement `FixedWindowStrategy`
+- [x] 6.5 Write failing tests for `SlidingWindowLogStrategy` (allow, deny, expired timestamp purge)
+- [x] 6.6 Implement `SlidingWindowLogStrategy`
+- [x] 6.7 Write failing tests for `SlidingWindowCounterStrategy` (allow under weighted estimate, deny at estimate)
+- [x] 6.8 Implement `SlidingWindowCounterStrategy`
+- [x] 6.9 Write failing tests for `TokenBucketStrategy` (allow with tokens available, deny when empty, refill proportional to elapsed time)
+- [x] 6.10 Implement `TokenBucketStrategy`
+- [x] 6.11 Write failing tests for `LeakyBucketStrategy` (GCRA allow/deny at boundary, TAT persistence only on allow)
+- [x] 6.12 Implement `LeakyBucketStrategy` — tau (burst tolerance) is `(burstCapacity - 1) * emissionInterval`; the invariant test in 6.14 caught an off-by-one with `burstCapacity * emissionInterval` that allowed one extra request per burst, fixed before completing this task
+- [x] 6.13 Write failing tests asserting every strategy's denied decision includes a non-null `retryAfter`
+- [x] 6.14 Add property-based or table-driven edge-case tests (remaining never negative, allowed never exceeds limit within a window) for all five strategies — table-driven via `@ParameterizedTest` over all five strategies (no jqwik dependency added)
+- [x] 6.15 Write failing tests for `StrategyRegistry` (resolves known types, rejects unknown types) — "unknown type" exercised via a null input, since `StrategyType` is a closed enum with all five values registered
+- [x] 6.16 Implement `StrategyRegistry`
+- [x] 6.17 Confirm all `rate-limit-strategy-evaluation` scenarios from the spec are covered by passing tests
 
 ## 7. Verification and wrap-up
 
