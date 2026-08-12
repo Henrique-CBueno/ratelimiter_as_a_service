@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<div th:fragment="nav">
+    <nav>
+        <a href="/app/resources">Resources</a>
+        <a href="/app/settings">Settings</a>
+        <form th:action="@{/app/logout}" method="post" style="display:inline">
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+            <button type="submit">Log out</button>
+        </form>
+    </nav>
+</div>
+
+<p th:fragment="error(message)" th:if="${message != null}" class="error" th:text="${message}">error</p>
+
+</body>
+</html>

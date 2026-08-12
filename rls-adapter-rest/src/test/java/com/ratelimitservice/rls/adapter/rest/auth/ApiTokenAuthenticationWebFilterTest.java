@@ -80,4 +80,15 @@ class ApiTokenAuthenticationWebFilterTest {
         assertThat(chainCalled.get()).isTrue();
         verifyNoInteractions(authenticateTenantUseCase);
     }
+
+    @Test
+    void passesThroughPathsOutsideApiV1WithoutRequiringAToken() {
+        MockServerWebExchange exchange = MockServerWebExchange.from(MockServerHttpRequest.get("/app/register"));
+        AtomicBoolean chainCalled = new AtomicBoolean();
+
+        StepVerifier.create(filter.filter(exchange, recordingChain(chainCalled))).verifyComplete();
+
+        assertThat(chainCalled.get()).isTrue();
+        verifyNoInteractions(authenticateTenantUseCase);
+    }
 }

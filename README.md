@@ -18,7 +18,8 @@ The service is designed to be stateless and horizontally scalable: all rate-limi
 Redis (evaluated atomically via Lua scripts to avoid race conditions across concurrent instances),
 tenant/resource configuration lives in PostgreSQL, and a circuit breaker protects the hot path
 against Redis unavailability with a per-tenant configurable fallback policy (fail-open /
-fail-closed). A Thymeleaf front end provides tenant onboarding, login, and a management dashboard.
+fail-closed). A server-rendered Thymeleaf front end provides tenant self-onboarding, session-based
+login, and a resource-management dashboard, alongside the REST API.
 
 ## Architecture
 
@@ -38,7 +39,12 @@ Modules (added incrementally, one per spec):
   breaker guarding `RateLimitEvaluationPort`
 - `rls-adapter-rest` — reactive REST API (tenant onboarding, resource management, rate-limit check,
   API key auth via `Authorization: Bearer`, OpenAPI/Swagger UI)
-- `rls-adapter-web` — Thymeleaf front end
+- `rls-adapter-web` — server-rendered Thymeleaf front end under `/app/**`: self-registration
+  (`/app/register`), session-based login/logout (`/app/login`, Spring Session backed by Redis so
+  sessions stay stateless across instances), and a resource-management dashboard
+  (`/app/resources`, `/app/settings`) that calls the same `rls-application` use cases the REST API
+  uses. Independent of the REST API's `Authorization: Bearer` auth — see design decision 3 in
+  `openspec/changes/archive/2026-08-12-thymeleaf-frontend/design.md`
 - `rls-bootstrap` — Spring Boot application assembly (composition root wiring every adapter and use
   case together, plus `application.yml`)
 
@@ -75,8 +81,8 @@ mvn -pl rls-adapter-persistence -am verify
 ```
 
 Modules existing so far: `rls-domain`, `rls-application`, `rls-adapter-redis`,
-`rls-adapter-persistence`, `rls-adapter-resilience`, `rls-adapter-rest`, `rls-bootstrap`.
-`rls-adapter-web` (the Thymeleaf front end) is added by a later OpenSpec change.
+`rls-adapter-persistence`, `rls-adapter-resilience`, `rls-adapter-rest`, `rls-adapter-web`,
+`rls-bootstrap`. Observability and Docker Compose are added by a later OpenSpec change.
 
 ## Running locally
 
@@ -99,7 +105,11 @@ Connection details default to `localhost` and the ports above; override via the 
 `POSTGRES_PASSWORD` environment variables (see `rls-bootstrap/src/main/resources/application.yml`).
 Flyway migrates the schema automatically on startup. Once running:
 
-- `POST http://localhost:8080/api/v1/tenants` — register a tenant, get back an API token
+- `POST http://localhost:8080/api/v1/tenants` — register a tenant via the REST API, get back an
+  API token
+- `http://localhost:8080/app/register` — register a tenant via the browser dashboard instead
+- `http://localhost:8080/app/login` — log in to the dashboard (session-based, separate from the
+  REST API's bearer token auth)
 - `http://localhost:8080/swagger-ui.html` — interactive API docs
 - `http://localhost:8080/v3/api-docs` — raw OpenAPI spec
 

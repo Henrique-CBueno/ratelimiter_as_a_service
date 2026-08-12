@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head><title>Settings</title></head>
+<body>
+<div th:replace="~{fragments/layout :: nav}"></div>
+
+<h1>API token</h1>
+
+<p th:if="${rotatedToken == null}">
+    Current token: <code th:text="${tokenPrefix} + '...'">prefix...</code>
+</p>
+
+<p th:if="${rotatedToken != null}">
+    Your new API token (shown only this once — store it somewhere safe):
+    <code data-testid="api-token" th:text="${rotatedToken}">api-token</code>
+</p>
+
+<form th:action="@{/app/settings/rotate}" method="post">
+    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+    <button type="submit">Rotate token</button>
+</form>
+</body>
+</html>

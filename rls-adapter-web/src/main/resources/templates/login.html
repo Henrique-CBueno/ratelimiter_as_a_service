@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head><title>Log in</title></head>
+<body>
+<h1>Log in</h1>
+
+<p th:if="${param.error}" class="error">Invalid email or password.</p>
+
+<form th:action="@{/app/login}" method="post">
+    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+    <label>Email <input type="email" name="username" required/></label>
+    <label>Password <input type="password" name="password" required/></label>
+    <button type="submit">Log in</button>
+</form>
+
+<p>New here? <a href="/app/register">Create an account</a></p>
+</body>
+</html>

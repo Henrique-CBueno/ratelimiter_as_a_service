@@ -10,6 +10,8 @@ import com.ratelimitservice.rls.application.resource.UpdateResourceUseCase;
 import com.ratelimitservice.rls.application.resource.port.ResourceRepositoryPort;
 import com.ratelimitservice.rls.application.security.port.SecretHasherPort;
 import com.ratelimitservice.rls.application.tenant.AuthenticateTenantUseCase;
+import com.ratelimitservice.rls.application.tenant.GetTenantUseCase;
+import com.ratelimitservice.rls.application.tenant.LoginTenantUseCase;
 import com.ratelimitservice.rls.application.tenant.RegisterTenantUseCase;
 import com.ratelimitservice.rls.application.tenant.RotateApiTokenUseCase;
 import com.ratelimitservice.rls.application.tenant.port.TenantRepositoryPort;
@@ -38,6 +40,17 @@ public class UseCaseConfig {
     @Bean
     public RotateApiTokenUseCase rotateApiTokenUseCase(TenantRepositoryPort tenantRepositoryPort) {
         return new RotateApiTokenUseCase(tenantRepositoryPort);
+    }
+
+    @Bean
+    public LoginTenantUseCase loginTenantUseCase(TenantRepositoryPort tenantRepositoryPort,
+                                                   SecretHasherPort secretHasherPort) {
+        return new LoginTenantUseCase(tenantRepositoryPort, secretHasherPort);
+    }
+
+    @Bean
+    public GetTenantUseCase getTenantUseCase(TenantRepositoryPort tenantRepositoryPort) {
+        return new GetTenantUseCase(tenantRepositoryPort);
     }
 
     @Bean

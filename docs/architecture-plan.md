@@ -197,6 +197,7 @@ o dashboard Thymeleaf (login separado do token de API).
    → **status: implementada e arquivada** (`openspec/changes/archive/2026-08-12-rest-api/`)
 5. **Front Thymeleaf** — módulo `rls-adapter-web`; onboarding, login (Spring Security
    form-login), dashboard CRUD reaproveitando os use cases da API REST; CSRF.
+   → **status: implementada e arquivada** (`openspec/changes/archive/2026-08-12-thymeleaf-frontend/`)
 6. **Observabilidade + Docker** — Actuator/Micrometer, health indicators customizados
    (Redis/R2DBC/circuit breaker), `Dockerfile` multi-stage, `docker-compose.yml`
    (app+Redis+Postgres), documentação de execução local.
