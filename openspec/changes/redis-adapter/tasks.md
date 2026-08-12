@@ -107,12 +107,19 @@
 
 ## 11. Parity with the domain strategies
 
-- [ ] 11.1 Build a shared test harness that drives an identical deterministic sequence of
+- [x] 11.1 Build a shared test harness that drives an identical deterministic sequence of
       `(quota, now)` calls through a Lua script (real Redis) and the corresponding pure
       `RateLimitStrategy` from `rls-domain`, asserting identical `allowed`/`remaining` at each step
-- [ ] 11.2 Apply the harness to all five strategies as a parameterized test
-- [ ] 11.3 Confirm the `LEAKY_BUCKET` parity case specifically exercises the burst-boundary
-      scenario (the case that would catch a `tau` formula regression)
+      — since the scripts never accept an externally supplied `now` (design decision 2), each step
+      reads Redis's own current time first (`fetchRedisNowMs()`) and feeds that same instant to the
+      domain side; resolves the domain strategy instance via `rls-domain`'s own `StrategyRegistry`
+- [x] 11.2 Apply the harness to all five strategies as a parameterized test (`@EnumSource`) — a
+      7-step rapid-fire sequence against `limit=5` (2 more than the limit) for every strategy
+- [x] 11.3 Confirm the `LEAKY_BUCKET` parity case specifically exercises the burst-boundary
+      scenario (the case that would catch a `tau` formula regression) — the same 7-step
+      rapid-fire sequence used for every strategy already forces exactly this case for Leaky
+      Bucket (whether the 6th request is denied depends entirely on the `tau` formula), so no
+      separate scenario was needed
 
 ## 12. Redis as the authoritative clock
 
