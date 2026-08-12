@@ -1,15 +1,15 @@
 ## 1. Repository and git-flow setup
 
-- [ ] 1.1 Run `git init`, create initial commit with `.gitignore` (Java/Maven/IDE) and a README describing the project
-- [ ] 1.2 Create `develop` branch from `main`; confirm git-flow branch conventions (`feature/*`, `release/*`, `hotfix/*`) are documented in the README or CONTRIBUTING notes
-- [ ] 1.3 Create `feature/setup-domain-core` branch from `develop` for this change's implementation work
+- [x] 1.1 Run `git init`, create initial commit with `.gitignore` (Java/Maven/IDE) and a README describing the project
+- [x] 1.2 Create `develop` branch from `main`; confirm git-flow branch conventions (`feature/*`, `release/*`, `hotfix/*`) are documented in the README or CONTRIBUTING notes
+- [x] 1.3 Create `feature/setup-domain-core` branch from `develop` for this change's implementation work
 
 ## 2. Maven multi-module skeleton
 
-- [ ] 2.1 Create parent `pom.xml` (`packaging=pom`) with `dependencyManagement` for Spring Boot BOM, Reactor BOM, JUnit5, AssertJ, Testcontainers BOM; fix Java version to 21
-- [ ] 2.2 Create `rls-domain` module (no framework dependencies; JUnit5 + AssertJ as test-scope only)
-- [ ] 2.3 Create `rls-application` module depending on `rls-domain` and `reactor-core`
-- [ ] 2.4 Verify `mvn -pl rls-domain,rls-application -am compile` succeeds with the empty skeleton
+- [x] 2.1 Create parent `pom.xml` (`packaging=pom`) with `dependencyManagement` for Spring Boot BOM, Reactor BOM, JUnit5, AssertJ, Testcontainers BOM; fix Java version to 21
+- [x] 2.2 Create `rls-domain` module (no framework dependencies; JUnit5 + AssertJ as test-scope only)
+- [x] 2.3 Create `rls-application` module depending on `rls-domain` and `reactor-core`
+- [x] 2.4 Verify `mvn -pl rls-domain,rls-application -am compile` succeeds with the empty skeleton
 
 ## 3. Shared value objects (rls-domain)
 
