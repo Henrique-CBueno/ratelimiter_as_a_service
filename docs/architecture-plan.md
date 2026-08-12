@@ -187,7 +187,7 @@ o dashboard Thymeleaf (login separado do token de API).
    → **status: implementada e arquivada** (`openspec/changes/archive/2026-08-12-setup-domain-core/`)
 2. **Portas + adapter Redis** — `RateLimitEvaluationPort`; módulo `rls-adapter-redis` (Lettuce/Spring
    Data Redis Reactive), 5 scripts Lua, registry strategy→script; testes de concorrência e paridade.
-   → **status: implementada** (`openspec/changes/redis-adapter/`, pendente de archive)
+   → **status: implementada e arquivada** (`openspec/changes/archive/2026-08-12-redis-adapter/`)
 3. **Adapter Postgres/R2DBC** — módulo `rls-adapter-persistence`; migrations Flyway; implementação
    de `TenantRepositoryPort`/`ResourceRepositoryPort`; hashing de senha/token.
 4. **API REST reativa + Circuit Breaker** — módulo `rls-adapter-rest` (controllers, auth por API
