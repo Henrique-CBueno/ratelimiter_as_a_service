@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head><title>Resources</title></head>
+<body>
+<div th:replace="~{fragments/layout :: nav}"></div>
+
+<h1>Your resources</h1>
+
+<p><a href="/app/resources/new">+ New resource</a></p>
+
+<table>
+    <thead>
+    <tr><th>Key</th><th>Strategy</th><th>Limit</th><th>Window (s)</th><th>Enabled</th><th></th></tr>
+    </thead>
+    <tbody>
+    <tr th:each="resource : ${resources}">
+        <td th:text="${resource.resourceKey()}">key</td>
+        <td th:text="${resource.strategyType()}">strategy</td>
+        <td th:text="${resource.quota().limit()}">limit</td>
+        <td th:text="${resource.quota().window().toSeconds()}">window</td>
+        <td th:text="${resource.enabled()}">enabled</td>
+        <td>
+            <a th:href="@{/app/resources/{id}/edit(id=${resource.id().value()})}">Edit</a>
+            <form th:action="@{/app/resources/{id}/delete(id=${resource.id().value()})}" method="post" style="display:inline">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                <button type="submit">Delete</button>
+            </form>
+        </td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>

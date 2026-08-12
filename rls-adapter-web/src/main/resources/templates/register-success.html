@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head><title>Registration complete</title></head>
+<body>
+<h1>Account created</h1>
+
+<p>Your tenant id: <span data-testid="tenant-id" th:text="${tenantId}">tenant-id</span></p>
+
+<p>
+    Your API token (shown only this once — store it somewhere safe):
+    <code data-testid="api-token" th:text="${apiToken}">api-token</code>
+</p>
+
+<p><a href="/app/login">Log in</a></p>
+</body>
+</html>

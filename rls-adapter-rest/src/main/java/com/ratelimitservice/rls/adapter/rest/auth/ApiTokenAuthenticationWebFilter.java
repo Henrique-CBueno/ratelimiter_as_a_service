@@ -15,11 +15,14 @@ import java.util.List;
  * Resolves the caller's {@code Authorization: Bearer <token>} header into a {@code Tenant} (via
  * {@link AuthenticateTenantUseCase}) and attaches it to the exchange under
  * {@link AuthenticatedTenant#ATTRIBUTE} for downstream handlers, or short-circuits with 401.
- * Tenant registration (and API documentation paths, once group 13 adds them) are allowlisted since
- * they must be reachable before a caller has a token.
+ * Tenant registration and API documentation paths are allowlisted since they must be reachable
+ * before a caller has a token. Every other path outside this filter's own surface (currently only
+ * {@code /app/**}, added by the {@code thymeleaf-frontend} change) is passed through untouched —
+ * this filter has no opinion on requests it wasn't built to guard.
  */
 public class ApiTokenAuthenticationWebFilter implements WebFilter {
 
+    private static final String GUARDED_PATH_PREFIX = "/api/v1/";
     private static final String PUBLIC_REGISTRATION_PATH = "/api/v1/tenants";
     private static final List<String> PUBLIC_PATH_PREFIXES = List.of("/v3/api-docs", "/swagger-ui", "/webjars");
     private static final String BEARER_PREFIX = "Bearer ";
@@ -32,7 +35,7 @@ public class ApiTokenAuthenticationWebFilter implements WebFilter {
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
-        if (isAllowlisted(exchange)) {
+        if (isOutsideGuardedSurface(exchange) || isAllowlisted(exchange)) {
             return chain.filter(exchange);
         }
 
@@ -47,6 +50,13 @@ public class ApiTokenAuthenticationWebFilter implements WebFilter {
                     return chain.filter(exchange);
                 })
                 .switchIfEmpty(Mono.defer(() -> unauthorized(exchange)));
+    }
+
+    private boolean isOutsideGuardedSurface(ServerWebExchange exchange) {
+        String path = exchange.getRequest().getPath().value();
+        boolean isApiPath = path.startsWith(GUARDED_PATH_PREFIX);
+        boolean isDocsPath = PUBLIC_PATH_PREFIXES.stream().anyMatch(path::startsWith);
+        return !isApiPath && !isDocsPath;
     }
 
     private boolean isAllowlisted(ServerWebExchange exchange) {

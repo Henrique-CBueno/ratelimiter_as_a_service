@@ -36,6 +36,7 @@
         <module>rls-adapter-persistence</module>
         <module>rls-adapter-resilience</module>
         <module>rls-adapter-rest</module>
+        <module>rls-adapter-web</module>
         <module>rls-bootstrap</module>
     </modules>
 

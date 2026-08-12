@@ -1,6 +1,10 @@
 server:
   port: ${PORT:8080}
 
+spring:
+  session:
+    store-type: redis
+
 rls:
   redis:
     host: ${REDIS_HOST:localhost}
