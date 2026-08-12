@@ -51,16 +51,23 @@
 
 ## 4. Application use case: check rate limit
 
-- [ ] 4.1 Write failing tests for `CheckRateLimitUseCase`'s happy path: resolves the resource by
+- [x] 4.1 Write failing tests for `CheckRateLimitUseCase`'s happy path: resolves the resource by
       tenant+key via `ResourceRepositoryPort`, builds the `RateLimitKey`, delegates to
       `RateLimitEvaluationPort`, returns the resulting decision; returns empty when the resource
-      is not found for that tenant
-- [ ] 4.2 Implement the happy path of `CheckRateLimitUseCase`
-- [ ] 4.3 Write failing tests for the fallback path: when the evaluation port raises
+      is not found for that tenant — the use case takes the already-authenticated `Tenant` object
+      directly (not just a `TenantId`), avoiding a redundant reload since the REST auth filter
+      (group 7) will have already resolved it
+- [x] 4.2 Implement the happy path of `CheckRateLimitUseCase`
+- [x] 4.3 Write failing tests for the fallback path: when the evaluation port raises
       `RateLimitEvaluationUnavailableException`, the use case resolves the resource's effective
       fallback policy (`RateLimitResource.resolveFallbackPolicy`, spec 1) against the loaded
-      tenant and returns a degraded decision matching that policy
-- [ ] 4.4 Implement the fallback path in `CheckRateLimitUseCase`
+      tenant and returns a degraded decision matching that policy — also defined
+      `RateLimitEvaluationUnavailableException` here (pulled forward from 5.1, same rationale as
+      earlier specs) since the test needed it to exist
+- [x] 4.4 Implement the fallback path in `CheckRateLimitUseCase` — fallback decisions use
+      `quota.limit()` as both limit and (for fail-open) remaining, and `quota.window()` as the
+      fail-closed retry-after, since the real remaining/reset values are unknowable while the
+      evaluation dependency is down; both are marked `degraded = true`
 
 ## 5. Circuit breaker adapter (rls-adapter-resilience)
 
