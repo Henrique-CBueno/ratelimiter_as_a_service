@@ -66,7 +66,7 @@
 
 ## 7. Verification and wrap-up
 
-- [ ] 7.1 Run `mvn verify` for `rls-domain` and `rls-application`; confirm 100% of the specs' scenarios map to passing tests
-- [ ] 7.2 Review branch coverage of the five strategies; add missing edge-case tests if any branch is uncovered
-- [ ] 7.3 Update README with build/test instructions (`mvn verify`) and a short description of the module layout
-- [ ] 7.4 Commit work on `feature/setup-domain-core` following git-flow commit conventions (no AI co-authorship line)
+- [x] 7.1 Run `mvn verify` for `rls-domain` and `rls-application`; confirm 100% of the specs' scenarios map to passing tests — 102 tests passing, `BUILD SUCCESS`
+- [x] 7.2 Review branch coverage of the five strategies; add missing edge-case tests if any branch is uncovered — added the JaCoCo plugin; all five strategy classes report 0 missed branches. The only uncovered branches project-wide are defensive null-guards (`value == null || value.isBlank()`-style short-circuits and `StrategyRegistry`'s unreachable-given-a-closed-enum "not found" path) not tied to any spec scenario — left untested as low-value
+- [x] 7.3 Update README with build/test instructions (`mvn verify`) and a short description of the module layout
+- [x] 7.4 Commit work on `feature/setup-domain-core` following git-flow commit conventions (no AI co-authorship line)
