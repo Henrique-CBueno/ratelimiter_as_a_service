@@ -5,6 +5,17 @@ spring:
   session:
     store-type: redis
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,prometheus
+  endpoint:
+    health:
+      show-details: always
+      status:
+        order: DOWN,DEGRADED,OUT_OF_SERVICE,UP,UNKNOWN
+
 rls:
   redis:
     host: ${REDIS_HOST:localhost}

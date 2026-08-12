@@ -201,6 +201,7 @@ o dashboard Thymeleaf (login separado do token de API).
 6. **Observabilidade + Docker** — Actuator/Micrometer, health indicators customizados
    (Redis/R2DBC/circuit breaker), `Dockerfile` multi-stage, `docker-compose.yml`
    (app+Redis+Postgres), documentação de execução local.
+   → **status: implementada e arquivada** (`openspec/changes/archive/2026-08-12-observability-docker/`)
 
 Cada spec vira uma `feature/*` branch a partir de `develop`, seguindo git flow.
 
