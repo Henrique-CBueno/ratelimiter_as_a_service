@@ -1,33 +1,45 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head><title>Resources</title></head>
-<body>
+<head th:replace="~{fragments/layout :: head('Resources')}"></head>
+<body class="min-h-screen bg-slate-50">
 <div th:replace="~{fragments/layout :: nav}"></div>
 
-<h1>Your resources</h1>
+<main class="mx-auto max-w-4xl px-6 py-10">
+    <div class="mb-6 flex items-center justify-between">
+        <h1 class="text-2xl font-semibold text-slate-900">Your resources</h1>
+        <a href="/app/resources/new" class="rounded-md bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800">+ New resource</a>
+    </div>
 
-<p><a href="/app/resources/new">+ New resource</a></p>
-
-<table>
-    <thead>
-    <tr><th>Key</th><th>Strategy</th><th>Limit</th><th>Window (s)</th><th>Enabled</th><th></th></tr>
-    </thead>
-    <tbody>
-    <tr th:each="resource : ${resources}">
-        <td th:text="${resource.resourceKey()}">key</td>
-        <td th:text="${resource.strategyType()}">strategy</td>
-        <td th:text="${resource.quota().limit()}">limit</td>
-        <td th:text="${resource.quota().window().toSeconds()}">window</td>
-        <td th:text="${resource.enabled()}">enabled</td>
-        <td>
-            <a th:href="@{/app/resources/{id}/edit(id=${resource.id().value()})}">Edit</a>
-            <form th:action="@{/app/resources/{id}/delete(id=${resource.id().value()})}" method="post" style="display:inline">
-                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
-                <button type="submit">Delete</button>
-            </form>
-        </td>
-    </tr>
-    </tbody>
-</table>
+    <div class="overflow-x-auto rounded-lg border border-slate-200 bg-white">
+        <table class="min-w-full divide-y divide-slate-200 text-sm">
+            <thead class="bg-slate-50">
+            <tr>
+                <th class="px-4 py-3 text-left font-medium text-slate-600">Key</th>
+                <th class="px-4 py-3 text-left font-medium text-slate-600">Strategy</th>
+                <th class="px-4 py-3 text-left font-medium text-slate-600">Limit</th>
+                <th class="px-4 py-3 text-left font-medium text-slate-600">Window (s)</th>
+                <th class="px-4 py-3 text-left font-medium text-slate-600">Enabled</th>
+                <th class="px-4 py-3"></th>
+            </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100">
+            <tr th:each="resource : ${resources}" class="hover:bg-slate-50">
+                <td class="px-4 py-3 font-mono text-slate-900" th:text="${resource.resourceKey()}">key</td>
+                <td class="px-4 py-3 text-slate-700" th:text="${resource.strategyType()}">strategy</td>
+                <td class="px-4 py-3 text-slate-700" th:text="${resource.quota().limit()}">limit</td>
+                <td class="px-4 py-3 text-slate-700" th:text="${resource.quota().window().toSeconds()}">window</td>
+                <td class="px-4 py-3 text-slate-700" th:text="${resource.enabled()}">enabled</td>
+                <td class="whitespace-nowrap px-4 py-3 text-right">
+                    <a th:href="@{/app/resources/{id}/edit(id=${resource.id().value()})}" class="text-slate-600 hover:text-slate-900 hover:underline">Edit</a>
+                    <form th:action="@{/app/resources/{id}/delete(id=${resource.id().value()})}" method="post" class="inline">
+                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                        <button type="submit" class="ml-3 text-red-600 hover:text-red-800 hover:underline">Delete</button>
+                    </form>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</main>
 </body>
 </html>

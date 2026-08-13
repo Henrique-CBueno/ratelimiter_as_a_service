@@ -10,6 +10,7 @@ import org.springframework.web.server.WebFilterChain;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Resolves the caller's {@code Authorization: Bearer <token>} header into a {@code Tenant} (via
@@ -44,12 +45,20 @@ public class ApiTokenAuthenticationWebFilter implements WebFilter {
             return unauthorized(exchange);
         }
 
+        // Wrapped in Optional so this Mono always emits exactly one value: chain.filter(exchange)
+        // returns Mono<Void>, which always completes empty on success, so a plain
+        // .flatMap(...).switchIfEmpty(...) here would misread every successful no-body response
+        // (e.g. 204 from DELETE) as "no tenant found" and overwrite it with 401 after the fact.
         return authenticateTenantUseCase.authenticate(rawToken)
-                .flatMap(tenant -> {
-                    exchange.getAttributes().put(AuthenticatedTenant.ATTRIBUTE, tenant);
+                .map(Optional::of)
+                .defaultIfEmpty(Optional.empty())
+                .flatMap(maybeTenant -> {
+                    if (maybeTenant.isEmpty()) {
+                        return unauthorized(exchange);
+                    }
+                    exchange.getAttributes().put(AuthenticatedTenant.ATTRIBUTE, maybeTenant.get());
                     return chain.filter(exchange);
-                })
-                .switchIfEmpty(Mono.defer(() -> unauthorized(exchange)));
+                });
     }
 
     private boolean isOutsideGuardedSurface(ServerWebExchange exchange) {
