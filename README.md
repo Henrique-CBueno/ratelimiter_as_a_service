@@ -129,7 +129,7 @@ docker compose up --build --scale app=2
 ```
 
 - App (via Traefik): `http://localhost`
-- Traefik dashboard: `http://localhost:8080` (local/dev only — no auth in front of it)
+- Traefik dashboard: `http://localhost:8081` (local/dev only — no auth in front of it)
 
 Traefik discovers every `app` replica automatically via Docker labels (no static config to update)
 and load-balances across them round-robin, routing only to instances whose `/actuator/health`

@@ -33,7 +33,11 @@ services:
       - --metrics.prometheus=true
     ports:
       - "80:80"
-      - "8080:8080"
+      # Host-side 8081, not 8080: load-tests/lib/http.js and "mvn spring-boot:run" both default to
+      # port 8080 for the app itself, so leaving Traefik's own dashboard/API there means a
+      # forgotten BASE_URL silently hits Traefik instead of the app and returns a confusing
+      # "404 page not found" (Traefik's own 404) instead of a clear connection error.
+      - "8081:8080"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
     depends_on:
