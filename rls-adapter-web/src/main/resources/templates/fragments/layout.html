@@ -1,19 +1,27 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="head(title)">
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title th:text="${title}">Title</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}"/>
+</head>
 <body>
 
 <div th:fragment="nav">
-    <nav>
-        <a href="/app/resources">Resources</a>
-        <a href="/app/settings">Settings</a>
-        <form th:action="@{/app/logout}" method="post" style="display:inline">
+    <nav class="flex items-center justify-between bg-slate-900 px-6 py-4 text-white">
+        <div class="flex items-center gap-6">
+            <a href="/app/resources" class="font-semibold hover:text-slate-300">Resources</a>
+            <a href="/app/settings" class="hover:text-slate-300">Settings</a>
+        </div>
+        <form th:action="@{/app/logout}" method="post">
             <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
-            <button type="submit">Log out</button>
+            <button type="submit" class="text-sm text-slate-300 hover:text-white">Log out</button>
         </form>
     </nav>
 </div>
 
-<p th:fragment="error(message)" th:if="${message != null}" class="error" th:text="${message}">error</p>
+<p th:fragment="error(message)" th:if="${message != null}" class="mb-4 rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700" th:text="${message}">error</p>
 
 </body>
 </html>

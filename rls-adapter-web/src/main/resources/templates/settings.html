@@ -1,23 +1,25 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head><title>Settings</title></head>
-<body>
+<head th:replace="~{fragments/layout :: head('Settings')}"></head>
+<body class="min-h-screen bg-slate-50">
 <div th:replace="~{fragments/layout :: nav}"></div>
 
-<h1>API token</h1>
+<main class="mx-auto max-w-xl px-6 py-10">
+    <h1 class="mb-6 text-2xl font-semibold text-slate-900">API token</h1>
 
-<p th:if="${rotatedToken == null}">
-    Current token: <code th:text="${tokenPrefix} + '...'">prefix...</code>
-</p>
+    <p th:if="${rotatedToken == null}" class="mb-6 text-sm text-slate-700">
+        Current token: <code th:text="${tokenPrefix} + '...'" class="font-mono text-slate-900">prefix...</code>
+    </p>
 
-<p th:if="${rotatedToken != null}">
-    Your new API token (shown only this once — store it somewhere safe):
-    <code data-testid="api-token" th:text="${rotatedToken}">api-token</code>
-</p>
+    <div th:if="${rotatedToken != null}" class="mb-6 rounded-md border border-amber-200 bg-amber-50 px-4 py-3">
+        <p class="text-sm text-amber-800">Your new API token (shown only this once — store it somewhere safe):</p>
+        <code data-testid="api-token" th:text="${rotatedToken}" class="mt-2 block break-all rounded border border-amber-200 bg-white px-3 py-2 font-mono text-sm text-slate-900">api-token</code>
+    </div>
 
-<form th:action="@{/app/settings/rotate}" method="post">
-    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
-    <button type="submit">Rotate token</button>
-</form>
+    <form th:action="@{/app/settings/rotate}" method="post">
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+        <button type="submit" class="rounded-md bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800">Rotate token</button>
+    </form>
+</main>
 </body>
 </html>

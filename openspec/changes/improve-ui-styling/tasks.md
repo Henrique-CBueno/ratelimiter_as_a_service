@@ -11,18 +11,18 @@
 
 ## 3. Shared layout fragment
 
-- [ ] 3.1 Add a `head` fragment to `fragments/layout.html` (title param + `<link rel="stylesheet" th:href="@{/css/app.css}"/>`)
-- [ ] 3.2 Style the shared `nav` fragment (and `error` fragment) with Tailwind utility classes
+- [x] 3.1 Add a `head` fragment to `fragments/layout.html` (title param + `<link rel="stylesheet" th:href="@{/css/app.css}"/>`)
+- [x] 3.2 Style the shared `nav` fragment (and `error` fragment) with Tailwind utility classes
 
 ## 4. Page-by-page styling
 
-- [ ] 4.1 Update `login.html` to consume the `head` fragment and style the login form
-- [ ] 4.2 Update `register.html` to consume the `head` fragment and style the registration form
-- [ ] 4.3 Update `register-success.html` to consume the `head` fragment and style the one-time token display
-- [ ] 4.4 Update `resources.html` to consume the `head` fragment and style the resources table + actions
-- [ ] 4.5 Update `resource-form.html` to consume the `head` fragment and style the create/edit form
-- [ ] 4.6 Update `settings.html` to consume the `head` fragment and style the token/rotate view
-- [ ] 4.7 Update `not-found.html` to consume the `head` fragment and style the not-found page
+- [x] 4.1 Update `login.html` to consume the `head` fragment and style the login form
+- [x] 4.2 Update `register.html` to consume the `head` fragment and style the registration form
+- [x] 4.3 Update `register-success.html` to consume the `head` fragment and style the one-time token display
+- [x] 4.4 Update `resources.html` to consume the `head` fragment and style the resources table + actions
+- [x] 4.5 Update `resource-form.html` to consume the `head` fragment and style the create/edit form
+- [x] 4.6 Update `settings.html` to consume the `head` fragment and style the token/rotate view
+- [x] 4.7 Update `not-found.html` to consume the `head` fragment and style the not-found page
 
 ## 5. Docker build
 
