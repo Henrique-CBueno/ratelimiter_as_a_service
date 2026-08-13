@@ -30,6 +30,7 @@ services:
       - --entrypoints.web.address=:80
       - --api.dashboard=true
       - --api.insecure=true
+      - --metrics.prometheus=true
     ports:
       - "80:80"
       - "8080:8080"
@@ -61,3 +62,26 @@ services:
       - traefik.http.services.app.loadbalancer.healthcheck.path=/actuator/health
       - traefik.http.services.app.loadbalancer.healthcheck.interval=5s
       - traefik.http.services.app.loadbalancer.healthcheck.timeout=3s
+
+  # Scrapes every `app` replica directly (not through Traefik — round robin would make scrapes
+  # jump between instances, breaking per-instance time series) plus Traefik's own metrics.
+  prometheus:
+    image: prom/prometheus:v2.55.1
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    ports:
+      - "9090:9090"
+    depends_on:
+      - traefik
+
+  # Pre-provisioned via grafana/provisioning/** — datasource and dashboard are already present on
+  # first start, no manual setup.
+  grafana:
+    image: grafana/grafana:11.3.1
+    volumes:
+      - ./grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./grafana/dashboards:/var/lib/grafana/dashboards:ro
+    ports:
+      - "3000:3000"
+    depends_on:
+      - prometheus
