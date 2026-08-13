@@ -39,7 +39,10 @@ COPY rls-adapter-persistence/src rls-adapter-persistence/src
 COPY rls-adapter-resilience/src rls-adapter-resilience/src
 COPY rls-adapter-rest/src rls-adapter-rest/src
 COPY rls-adapter-web/src rls-adapter-web/src
+COPY rls-adapter-web/scripts rls-adapter-web/scripts
 COPY rls-bootstrap/src rls-bootstrap/src
+
+RUN chmod +x rls-adapter-web/scripts/download-tailwind.sh
 
 RUN mvn -B -q -pl rls-bootstrap -am install -DskipTests \
     && mvn -B -q -pl rls-bootstrap package org.springframework.boot:spring-boot-maven-plugin:3.5.16:repackage -DskipTests

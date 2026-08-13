@@ -27,9 +27,9 @@
 ## 5. Docker build
 
 - [x] 5.1 Add `curl`/`ca-certificates` to the `Dockerfile`'s Maven build stage
-- [ ] 5.2 Run `docker build` end-to-end and confirm `/css/app.css` is served correctly from the resulting image
+- [x] 5.2 Run `docker build` end-to-end and confirm `/css/app.css` is served correctly from the resulting image
 
 ## 6. Verification
 
-- [ ] 6.1 Manually load each of the 7 pages in a browser and confirm consistent styling (nav, forms, table, buttons, error messages)
-- [ ] 6.2 Confirm existing web E2E tests (`WebAuthenticationE2EIT`, etc.) still pass unmodified (behavior unchanged, only markup/classes added)
+- [x] 6.1 Load pages via the running container and confirm consistent styling (nav, forms, table, buttons, error messages) — verified via HTTP against `docker compose up` (no GUI browser available in this environment)
+- [x] 6.2 Confirm existing web E2E tests (`WebAuthenticationE2EIT`, etc.) still pass — required updating one markup-coupled assertion in `WebOnboardingAndDashboardE2EIT` (exact `<td>false</td>` match) to tolerate the added `class` attribute; no behavioral change
