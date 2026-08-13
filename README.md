@@ -134,3 +134,34 @@ docker compose up --build
 Both instances enforce rate limits through the same Redis-backed state, so alternating requests
 between the two ports for the same tenant/resource/client IP combination is enforced exactly as if
 every request had gone to a single instance. `docker compose down` tears the stack down.
+
+## Load testing
+
+`load-tests/` has [k6](https://k6.io) scripts covering the rate-limit check endpoint, tenant
+onboarding, resource CRUD, and the web login flow. Install k6 (a single binary, no package manager
+required — see the [installation docs](https://grafana.com/docs/k6/latest/set-up/install-k6/)),
+then run any script against a running instance of the app:
+
+```
+BASE_URL=http://localhost:8080 k6 run load-tests/check-rate-limit.js
+BASE_URL=http://localhost:8080 k6 run load-tests/tenant-onboarding.js
+BASE_URL=http://localhost:8080 k6 run load-tests/resource-crud.js
+BASE_URL=http://localhost:8080 k6 run load-tests/web-auth.js
+```
+
+`BASE_URL` defaults to `http://localhost:8080`; point it at the Docker Compose topology (e.g.
+`http://localhost:8082`) or any other reachable instance. Each script provisions its own test
+tenant/resources via the real API — no manual setup needed.
+
+Each run ends with a **THRESHOLDS** section: a `✓`/`✗` per threshold tells you pass/fail at a
+glance, and the run's process exits non-zero if any threshold failed (useful for scripting). A few
+things worth knowing when reading the output:
+
+- `check-rate-limit.js` deliberately exceeds the configured limit — seeing `429`s in the results is
+  the expected, correct outcome, not a failure. The threshold on `http_req_failed` only flags
+  genuine infra errors (network failures, 5xx), since `429` is explicitly excluded from that
+  classification for this script.
+- `tenant-onboarding.js` and `resource-crud.js` create real rows in PostgreSQL on every run and
+  don't clean up after themselves — they're meant for a disposable/local database. Run
+  `docker compose down -v` between repeated runs if you want a clean slate (the `-v` also drops the
+  Postgres volume, not just the containers).
