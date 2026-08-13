@@ -19,26 +19,32 @@ services:
       timeout: 3s
       retries: 10
 
-  # Two instances of the same image, sharing Redis/Postgres, exposed on different host ports —
-  # this is the topology the horizontal-scalability verification (spec 6, group 7) exercises: the
-  # same rate limit enforced correctly no matter which instance a request lands on.
-  app1:
-    build: .
+  # Single HTTP entrypoint. Discovers `app` replicas automatically via the Docker provider (no
+  # static router config to update when scaling) and load-balances across them, round-robin, using
+  # its own health check against each instance's /actuator/health.
+  traefik:
+    image: traefik:v3.1
+    command:
+      - --providers.docker=true
+      - --providers.docker.exposedbydefault=false
+      - --entrypoints.web.address=:80
+      - --api.dashboard=true
+      - --api.insecure=true
     ports:
-      - "8081:8080"
-    environment:
-      REDIS_HOST: redis
-      POSTGRES_HOST: postgres
+      - "80:80"
+      - "8080:8080"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
     depends_on:
-      redis:
-        condition: service_healthy
-      postgres:
-        condition: service_healthy
+      - app
 
-  app2:
+  # Stateless and horizontally scalable: no host port mapping, so `docker compose up --scale
+  # app=N` can start as many replicas as wanted without a host-port collision. Traefik discovers
+  # each replica via its labels and load-balances across them — this is the topology the
+  # horizontal-scalability verification (spec 6, group 7) exercises, now reached through a single
+  # entrypoint instead of two fixed named ports.
+  app:
     build: .
-    ports:
-      - "8082:8080"
     environment:
       REDIS_HOST: redis
       POSTGRES_HOST: postgres
@@ -47,3 +53,11 @@ services:
         condition: service_healthy
       postgres:
         condition: service_healthy
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.app.rule=PathPrefix(`/`)
+      - traefik.http.routers.app.entrypoints=web
+      - traefik.http.services.app.loadbalancer.server.port=8080
+      - traefik.http.services.app.loadbalancer.healthcheck.path=/actuator/health
+      - traefik.http.services.app.loadbalancer.healthcheck.interval=5s
+      - traefik.http.services.app.loadbalancer.healthcheck.timeout=3s
