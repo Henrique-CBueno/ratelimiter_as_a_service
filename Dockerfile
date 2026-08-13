@@ -15,6 +15,13 @@
 FROM maven:3.9-eclipse-temurin-21 AS build
 WORKDIR /workspace
 
+# curl is needed to download the standalone Tailwind CLI binary during rls-adapter-web's
+# generate-resources phase (see rls-adapter-web/scripts/download-tailwind.sh) — Tailwind CSS is
+# compiled at build time, not bundled or fetched via Node/npm.
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends curl ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+
 COPY pom.xml .
 COPY rls-domain/pom.xml rls-domain/pom.xml
 COPY rls-application/pom.xml rls-application/pom.xml
@@ -32,7 +39,10 @@ COPY rls-adapter-persistence/src rls-adapter-persistence/src
 COPY rls-adapter-resilience/src rls-adapter-resilience/src
 COPY rls-adapter-rest/src rls-adapter-rest/src
 COPY rls-adapter-web/src rls-adapter-web/src
+COPY rls-adapter-web/scripts rls-adapter-web/scripts
 COPY rls-bootstrap/src rls-bootstrap/src
+
+RUN chmod +x rls-adapter-web/scripts/download-tailwind.sh
 
 RUN mvn -B -q -pl rls-bootstrap -am install -DskipTests \
     && mvn -B -q -pl rls-bootstrap package org.springframework.boot:spring-boot-maven-plugin:3.5.16:repackage -DskipTests

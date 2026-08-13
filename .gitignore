@@ -11,6 +11,9 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 
+# Tailwind CLI standalone binary (downloaded per-platform during the build)
+rls-adapter-web/bin/
+
 # IDEs
 .idea/
 *.iml

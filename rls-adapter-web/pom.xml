@@ -64,4 +64,107 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>3.4.0</version>
+            </plugin>
+        </plugins>
+    </build>
+
+    <!--
+        Tailwind CSS is compiled by the standalone CLI binary (no Node/npm). Which executable/
+        arguments to invoke differs by OS, so each OS gets its own profile re-declaring the same
+        two exec-maven-plugin executions rather than trying to parameterize a single shared one.
+    -->
+    <profiles>
+        <profile>
+            <id>tailwind-unix</id>
+            <activation>
+                <os><family>unix</family></os>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>tailwind-download</id>
+                                <phase>generate-resources</phase>
+                                <goals><goal>exec</goal></goals>
+                                <configuration>
+                                    <executable>${project.basedir}/scripts/download-tailwind.sh</executable>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>tailwind-build</id>
+                                <phase>generate-resources</phase>
+                                <goals><goal>exec</goal></goals>
+                                <configuration>
+                                    <executable>${project.basedir}/bin/tailwindcss</executable>
+                                    <arguments>
+                                        <argument>-i</argument>
+                                        <argument>${project.basedir}/src/main/resources/tailwind/input.css</argument>
+                                        <argument>-o</argument>
+                                        <argument>${project.build.outputDirectory}/static/css/app.css</argument>
+                                        <argument>--minify</argument>
+                                    </arguments>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>tailwind-windows</id>
+            <activation>
+                <os><family>windows</family></os>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>tailwind-download</id>
+                                <phase>generate-resources</phase>
+                                <goals><goal>exec</goal></goals>
+                                <configuration>
+                                    <executable>powershell</executable>
+                                    <arguments>
+                                        <argument>-NoProfile</argument>
+                                        <argument>-ExecutionPolicy</argument>
+                                        <argument>Bypass</argument>
+                                        <argument>-File</argument>
+                                        <argument>${project.basedir}/scripts/download-tailwind.ps1</argument>
+                                    </arguments>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>tailwind-build</id>
+                                <phase>generate-resources</phase>
+                                <goals><goal>exec</goal></goals>
+                                <configuration>
+                                    <executable>${project.basedir}/bin/tailwindcss.exe</executable>
+                                    <arguments>
+                                        <argument>-i</argument>
+                                        <argument>${project.basedir}/src/main/resources/tailwind/input.css</argument>
+                                        <argument>-o</argument>
+                                        <argument>${project.build.outputDirectory}/static/css/app.css</argument>
+                                        <argument>--minify</argument>
+                                    </arguments>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>

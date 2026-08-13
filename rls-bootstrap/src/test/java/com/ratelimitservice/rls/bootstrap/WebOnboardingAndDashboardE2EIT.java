@@ -132,7 +132,7 @@ class WebOnboardingAndDashboardE2EIT extends AbstractE2ETest {
                 .expectStatus().isOk()
                 .expectBody(String.class)
                 .returnResult();
-        assertThat(listAfterDelete.getResponseBody()).contains("<td>false</td>");
+        assertThat(listAfterDelete.getResponseBody()).containsPattern("<td[^>]*>false</td>");
 
         EntityExchangeResult<String> settingsPage = webTestClient.get().uri("/app/settings")
                 .cookie("SESSION", authenticatedSession)

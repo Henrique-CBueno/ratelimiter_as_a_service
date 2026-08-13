@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head><title>Not found</title></head>
-<body>
+<head th:replace="~{fragments/layout :: head('Not found')}"></head>
+<body class="min-h-screen bg-slate-50">
 <div th:replace="~{fragments/layout :: nav}"></div>
-<h1>Not found</h1>
-<p>That resource does not exist.</p>
-<p><a href="/app/resources">Back to resources</a></p>
+<main class="mx-auto max-w-xl px-6 py-10 text-center">
+    <h1 class="mb-4 text-2xl font-semibold text-slate-900">Not found</h1>
+    <p class="mb-6 text-slate-600">That resource does not exist.</p>
+    <p><a href="/app/resources" class="font-medium text-slate-900 hover:underline">Back to resources</a></p>
+</main>
 </body>
 </html>
