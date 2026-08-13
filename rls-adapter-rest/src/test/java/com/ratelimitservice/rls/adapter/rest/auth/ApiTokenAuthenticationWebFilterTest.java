@@ -71,6 +71,25 @@ class ApiTokenAuthenticationWebFilterTest {
     }
 
     @Test
+    void doesNotOverwriteASuccessfulNoBodyResponseWithUnauthorized() {
+        // Regression test: chain.filter(exchange) is a Mono<Void>, which always completes empty
+        // on success (e.g. a 204 No Content response). A naive .switchIfEmpty(...) chained after
+        // the flatMap would misread that as "no tenant found" and stomp the response with 401.
+        Tenant tenant = Tenant.register("Acme Inc", "ops@acme.test", "hashed-secret", FallbackPolicy.FAIL_OPEN);
+        when(authenticateTenantUseCase.authenticate("good-token")).thenReturn(Mono.just(tenant));
+        MockServerWebExchange exchange = MockServerWebExchange.from(
+                MockServerHttpRequest.delete("/api/v1/resources/some-id").header(HttpHeaders.AUTHORIZATION, "Bearer good-token"));
+        WebFilterChain noContentChain = ex -> {
+            ex.getResponse().setStatusCode(HttpStatus.NO_CONTENT);
+            return ex.getResponse().setComplete();
+        };
+
+        StepVerifier.create(filter.filter(exchange, noContentChain)).verifyComplete();
+
+        assertThat(exchange.getResponse().getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+    }
+
+    @Test
     void allowsTenantRegistrationWithoutAToken() {
         MockServerWebExchange exchange = MockServerWebExchange.from(MockServerHttpRequest.post("/api/v1/tenants"));
         AtomicBoolean chainCalled = new AtomicBoolean();
