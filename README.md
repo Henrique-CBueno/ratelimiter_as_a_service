@@ -145,6 +145,20 @@ All instances enforce rate limits through the same Redis-backed state, so reques
 across them for the same tenant/resource/client IP combination are enforced exactly as if every
 request had gone to a single instance. `docker compose down` tears the stack down.
 
+## Metrics dashboard
+
+The same `docker compose up` also starts Prometheus and a pre-provisioned Grafana — no manual setup
+needed, the datasource and dashboard are already there on first start:
+
+- Grafana: `http://localhost:3000` (default login `admin`/`admin`, local/dev only) — open the
+  **Load Distribution** dashboard for total request rate, request rate per `app` instance, and each
+  instance's percentage share of total load
+- Prometheus: `http://localhost:9090` — browse raw metrics or check `/targets` to see every
+  currently-scraped `app` instance and Traefik
+
+Prometheus discovers `app` replicas the same way Traefik does — automatically, via Docker — so
+scaling with `--scale app=N` shows up on the dashboard without touching any config.
+
 ## Load testing
 
 `load-tests/` has [k6](https://k6.io) scripts covering the rate-limit check endpoint, tenant
