@@ -21,6 +21,58 @@ class WebAuthenticationE2EIT extends AbstractE2ETest {
     }
 
     @Test
+    void unauthenticatedRootRequestRedirectsToLogin() {
+        webTestClient.get().uri("/app")
+                .exchange()
+                .expectStatus().is3xxRedirection()
+                .expectHeader().valueMatches("Location", ".*/app/login");
+    }
+
+    @Test
+    void authenticatedRootRequestRedirectsToResourcesInsteadOf404() {
+        EntityExchangeResult<String> registerForm = webTestClient.get().uri("/app/register")
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(String.class)
+                .returnResult();
+        String session = sessionCookie(registerForm);
+        String registerCsrf = csrfToken(registerForm);
+
+        String email = "root-redirect-e2e@acme.test";
+        webTestClient.post().uri("/app/register")
+                .cookie("SESSION", session)
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .body(BodyInserters.fromFormData(formData("_csrf", registerCsrf, "name", "Acme Inc",
+                        "email", email, "password", "s3cret")))
+                .exchange()
+                .expectStatus().isOk();
+
+        EntityExchangeResult<String> loginForm = webTestClient.get().uri("/app/login")
+                .cookie("SESSION", session)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(String.class)
+                .returnResult();
+        String loginCsrf = csrfToken(loginForm);
+
+        EntityExchangeResult<byte[]> loginResult = webTestClient.post().uri("/app/login")
+                .cookie("SESSION", session)
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .body(BodyInserters.fromFormData(formData("_csrf", loginCsrf, "username", email, "password", "s3cret")))
+                .exchange()
+                .expectStatus().is3xxRedirection()
+                .expectBody()
+                .returnResult();
+        String authenticatedSession = sessionCookie(loginResult);
+
+        webTestClient.get().uri("/app")
+                .cookie("SESSION", authenticatedSession)
+                .exchange()
+                .expectStatus().is3xxRedirection()
+                .expectHeader().valueMatches("Location", ".*/app/resources");
+    }
+
+    @Test
     void logoutInvalidatesTheSessionSoTheDashboardRedirectsAgain() {
         EntityExchangeResult<String> registerForm = webTestClient.get().uri("/app/register")
                 .exchange()
