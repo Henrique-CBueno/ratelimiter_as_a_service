@@ -1,25 +1,4 @@
-# containerized-deployment Specification
-
-## Purpose
-TBD - created by syncing change observability-docker. Update Purpose after archive.
-## Requirements
-### Requirement: The application builds as a container image
-The system SHALL provide a multi-stage `Dockerfile` that builds `rls-bootstrap` and its module
-dependencies into a runnable container image, without requiring a pre-built jar on the host.
-
-#### Scenario: Building the image from a clean checkout succeeds
-- **WHEN** `docker build` is run against the repository root on a machine with only Docker
-  installed (no local Maven/JDK setup required)
-- **THEN** the build completes successfully and produces a runnable image
-
-### Requirement: Docker Compose starts the application with its backing services
-The system SHALL provide a `docker-compose.yml` that starts Redis, PostgreSQL, and the application,
-wired together with no manual configuration.
-
-#### Scenario: Compose startup succeeds and the application is reachable
-- **WHEN** `docker compose up` is run from a clean state
-- **THEN** Redis, PostgreSQL, and the application all start successfully, and the application's
-  `/actuator/health` endpoint reports `UP` once dependencies are ready
+## MODIFIED Requirements
 
 ### Requirement: Docker Compose runs multiple stateless application instances against shared state
 The system SHALL support running more than one application instance in the same Compose topology,
@@ -38,4 +17,3 @@ only through a single load-balanced entrypoint, not through individually publish
 - **WHEN** the Compose topology is started with `docker compose up --scale app=N`
 - **THEN** no individual application instance publishes its own host port; the only way to reach the
   application from outside the Compose network is through the load balancer's entrypoint
-

@@ -121,19 +121,29 @@ Flyway migrates the schema automatically on startup. Once running:
 ## Running with Docker Compose
 
 The repository root has a multi-stage `Dockerfile` and a `docker-compose.yml` that starts Redis,
-PostgreSQL, and **two** application instances sharing them — the setup used to actually
-demonstrate the stateless/horizontal-scalability design, not just claim it:
+PostgreSQL, a [Traefik](https://traefik.io) reverse proxy, and a scalable `app` service — the setup
+used to actually demonstrate the stateless/horizontal-scalability design, not just claim it:
 
 ```
-docker compose up --build
+docker compose up --build --scale app=2
 ```
 
-- App instance 1: `http://localhost:8081`
-- App instance 2: `http://localhost:8082`
+- App (via Traefik): `http://localhost`
+- Traefik dashboard: `http://localhost:8080` (local/dev only — no auth in front of it)
 
-Both instances enforce rate limits through the same Redis-backed state, so alternating requests
-between the two ports for the same tenant/resource/client IP combination is enforced exactly as if
-every request had gone to a single instance. `docker compose down` tears the stack down.
+Traefik discovers every `app` replica automatically via Docker labels (no static config to update)
+and load-balances across them round-robin, routing only to instances whose `/actuator/health`
+currently reports healthy. Individual instances are **not** reachable on their own host port — the
+container publishes no port at all, so `http://localhost` is the only way in. Scale up or down at
+any time without touching any config file:
+
+```
+docker compose up -d --scale app=4
+```
+
+All instances enforce rate limits through the same Redis-backed state, so requests distributed
+across them for the same tenant/resource/client IP combination are enforced exactly as if every
+request had gone to a single instance. `docker compose down` tears the stack down.
 
 ## Load testing
 
@@ -150,8 +160,8 @@ BASE_URL=http://localhost:8080 k6 run load-tests/web-auth.js
 ```
 
 `BASE_URL` defaults to `http://localhost:8080`; point it at the Docker Compose topology (e.g.
-`http://localhost:8082`) or any other reachable instance. Each script provisions its own test
-tenant/resources via the real API — no manual setup needed.
+`http://localhost`, via Traefik) or any other reachable instance. Each script provisions its own
+test tenant/resources via the real API — no manual setup needed.
 
 Each run ends with a **THRESHOLDS** section: a `✓`/`✗` per threshold tells you pass/fail at a
 glance, and the run's process exits non-zero if any threshold failed (useful for scripting). A few
