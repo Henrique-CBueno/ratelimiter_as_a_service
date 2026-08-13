@@ -1,13 +1,13 @@
 ## 1. Tooling setup
 
-- [ ] 1.1 Add `rls-adapter-web/bin/` to root `.gitignore`
-- [ ] 1.2 Write download scripts for the Tailwind standalone CLI binary: a shell script (Linux, used in `Dockerfile`) and a PowerShell script (Windows, for local dev), both idempotent (skip if the binary already exists)
-- [ ] 1.3 Add `exec-maven-plugin` to `rls-adapter-web/pom.xml` with two `generate-resources` executions: download the binary, then compile `tailwind/input.css` into `target/classes/static/css/app.css`
+- [x] 1.1 Add `rls-adapter-web/bin/` to root `.gitignore`
+- [x] 1.2 Write download scripts for the Tailwind standalone CLI binary: a shell script (Linux, used in `Dockerfile`) and a PowerShell script (Windows, for local dev), both idempotent (skip if the binary already exists)
+- [x] 1.3 Add `exec-maven-plugin` to `rls-adapter-web/pom.xml` with two `generate-resources` executions: download the binary, then compile `tailwind/input.css` into `target/classes/static/css/app.css`
 
 ## 2. Tailwind input
 
-- [ ] 2.1 Create `rls-adapter-web/src/main/resources/tailwind/input.css` with `@import "tailwindcss";` and `@source` directives covering `templates/**/*.html`
-- [ ] 2.2 Run a local build and confirm `target/classes/static/css/app.css` is generated and non-empty
+- [x] 2.1 Create `rls-adapter-web/src/main/resources/tailwind/input.css` with `@import "tailwindcss";` and `@source` directives covering `templates/**/*.html`
+- [x] 2.2 Run a local build and confirm `target/classes/static/css/app.css` is generated and non-empty
 
 ## 3. Shared layout fragment
 
