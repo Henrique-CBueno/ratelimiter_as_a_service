@@ -26,7 +26,7 @@
 
 ## 5. Docker build
 
-- [ ] 5.1 Add `curl`/`ca-certificates` to the `Dockerfile`'s Maven build stage
+- [x] 5.1 Add `curl`/`ca-certificates` to the `Dockerfile`'s Maven build stage
 - [ ] 5.2 Run `docker build` end-to-end and confirm `/css/app.css` is served correctly from the resulting image
 
 ## 6. Verification

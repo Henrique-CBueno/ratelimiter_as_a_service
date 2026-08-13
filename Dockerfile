@@ -15,6 +15,13 @@
 FROM maven:3.9-eclipse-temurin-21 AS build
 WORKDIR /workspace
 
+# curl is needed to download the standalone Tailwind CLI binary during rls-adapter-web's
+# generate-resources phase (see rls-adapter-web/scripts/download-tailwind.sh) — Tailwind CSS is
+# compiled at build time, not bundled or fetched via Node/npm.
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends curl ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+
 COPY pom.xml .
 COPY rls-domain/pom.xml rls-domain/pom.xml
 COPY rls-application/pom.xml rls-application/pom.xml
