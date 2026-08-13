@@ -53,34 +53,9 @@ resolve isso como um serviço à parte:
 Visão de infraestrutura de alto nível — como uma requisição chega até uma instância da aplicação e
 onde o estado compartilhado e a observabilidade se encaixam:
 
-```mermaid
-flowchart LR
-    Client["Cliente B2B / Navegador"]
-    Traefik["Traefik<br/>(Load Balancer)"]
-    subgraph Apps["Instâncias da aplicação (escaláveis)"]
-        App1["app #1"]
-        App2["app #2"]
-        AppN["app #N"]
-    end
-    Redis[("Redis<br/>contadores de rate limit")]
-    Postgres[("PostgreSQL<br/>tenants &amp; resources")]
-    Prometheus["Prometheus"]
-    Grafana["Grafana"]
+![Diagrama de arquitetura: Cliente → Traefik → instâncias da aplicação → Redis/PostgreSQL, com Prometheus e Grafana como observabilidade](images/diagram/diagram.png)
 
-    Client -->|":80"| Traefik
-    Traefik -->|"round-robin<br/>health-checked"| App1
-    Traefik --> App2
-    Traefik --> AppN
-    App1 --> Redis
-    App2 --> Redis
-    AppN --> Redis
-    App1 --> Postgres
-    App2 --> Postgres
-    AppN --> Postgres
-    Prometheus -.->|scrape| Traefik
-    Prometheus -.->|scrape| Apps
-    Grafana --> Prometheus
-```
+*Fonte editável em [`images/diagram/architecture.mmd`](images/diagram/architecture.mmd) (Mermaid).*
 
 Nenhuma instância `app` guarda estado próprio: Redis e PostgreSQL são a única fonte de verdade
 compartilhada, o que é o que torna o balanceamento round-robin acima seguro — qualquer instância

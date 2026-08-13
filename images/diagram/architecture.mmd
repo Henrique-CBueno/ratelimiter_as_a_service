@@ -1,0 +1,26 @@
+flowchart LR
+    Client["Cliente B2B / Navegador"]
+    Traefik["Traefik<br/>(Load Balancer)"]
+    subgraph Apps["Instâncias da aplicação (escaláveis)"]
+        App1["app #1"]
+        App2["app #2"]
+        AppN["app #N"]
+    end
+    Redis[("Redis<br/>contadores de rate limit")]
+    Postgres[("PostgreSQL<br/>tenants &amp; resources")]
+    Prometheus["Prometheus"]
+    Grafana["Grafana"]
+
+    Client -->|":80"| Traefik
+    Traefik -->|"round-robin<br/>health-checked"| App1
+    Traefik --> App2
+    Traefik --> AppN
+    App1 --> Redis
+    App2 --> Redis
+    AppN --> Redis
+    App1 --> Postgres
+    App2 --> Postgres
+    AppN --> Postgres
+    Prometheus -.->|scrape| Traefik
+    Prometheus -.->|scrape| Apps
+    Grafana --> Prometheus
